@@ -42,6 +42,9 @@
 		}
 	});
 
+    document.getElementById("userImage").setAttribute("src", "./users/u" + getCookie("uid") +".jpg");
+    document.getElementById("userName").innerHTML=document.getElementById("Uname").value;
+    document.getElementById("userType").innerHTML= document.getElementById("Utype").value;
 	//alert(getCookie("navbar_expand"));
 </script>
 {{ end }}

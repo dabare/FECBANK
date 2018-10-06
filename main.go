@@ -16,6 +16,7 @@ import (
 	"os/exec"
 	"fmt"
 	"io/ioutil"
+	"io"
 )
 
 var errDefault = 0
@@ -24,6 +25,7 @@ var errMysqlDBname = 1
 var errDBquery = 2
 var errBrowser = 4
 var errSevingHelper = 5
+var errFileUpload = 6
 
 var dbName = "FEC"
 
@@ -48,19 +50,23 @@ var homepage = true
 
 type SiteData struct {
 	Uname	string
-	Uimg	string
+	Uid 	int64
 	Utype	string
 	NavColaps	bool
 	Data interface{}
+}
+
+func setCookie(w http.ResponseWriter,Name string, Value string)  {
+	expiration := time.Now().Add(365 * 24 * time.Hour)
+	cookie := http.Cookie{Name: Name, Value: Value, Expires: expiration}
+	http.SetCookie(w, &cookie)
 }
 
 func NavColaps(w http.ResponseWriter, r *http.Request) bool {
 	navColaps := false
 	tmp , err := r.Cookie("navbar_expand")
 	if(err!=nil){
-		expiration := time.Now().Add(365 * 24 * time.Hour)
-		cookie := http.Cookie{Name: "navbar_expand", Value: "false", Expires: expiration}
-		http.SetCookie(w, &cookie)
+		setCookie(w,"navbar_expand","false")
 	}else{
 		if(tmp.Value == "true"){
 			navColaps = true
@@ -103,6 +109,7 @@ func checkErr(err error, typ int) {
 	if err == nil {
 		return
 	}
+	panic(err)
 	switch typ {
 	default:
 		println("Error occured!, Please contact developer :)")
@@ -120,6 +127,7 @@ func initDatabase() {
 func getResultDB(query string) *sql.Rows {
 	debugMSG(query)
 	database, _ := sql.Open("sqlite3", "./database/" + dbName + ".db")
+
 	rows, err := database.Query(query)
 	checkErr(err, errDBquery)
 
@@ -172,8 +180,10 @@ func checkUserValid(w http.ResponseWriter, r *http.Request) bool {
 }
 
 func addUserInfo(w http.ResponseWriter, r *http.Request,siteData *SiteData)  {
+
+	setCookie(w,"uid","1")
+	siteData.Uid = 1
 	siteData.Uname = "Nimeshi Wickramasinghe"
-	siteData.Uimg = "img/a3.jpg"
 	siteData.Utype = "Treasurere"
 	siteData.NavColaps = NavColaps(w,r)
 }
@@ -282,26 +292,144 @@ func index(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+type MemberData struct {
+	Id 	int64
+	Pos 	string
+	Email 	string
+	Pass 	string
+	Name 	string
+	Note 	string
+	Tel 	string
+	Adrs 	string
+	Nic 	string
+	Act 	bool
+	Dob 	string
+	Age 	int
+	Image	string
+	ActPan 	bool //current active pannel
+}
+
+type MembersData struct {
+	NextId	int64
+	Members []MemberData
+}
+
 func members(w http.ResponseWriter, r *http.Request) {
 	if(checkUserValid(w,r)){
-		r.ParseForm()
+		membersData := MembersData{getNextID("user"),nil}
 
-		name := r.FormValue("name")
-		debugMSG(name)dev
+		rows := getResultDB("SELECT * FROM user ORDER BY name ASC")
+		ActPan := true
+		for rows.Next(){
+			tmp := MemberData{}
 
+			var Id 		sql.NullInt64
+			var Pos 	sql.NullString
+			var Email 	sql.NullString
+			var Pass 	sql.NullString
+			var Name 	sql.NullString
+			var Note 	sql.NullString
+			var Tel 	sql.NullString
+			var Adrs 	sql.NullString
+			var Nic 	sql.NullString
+			var Act 	sql.NullString
+			var Dob 	sql.RawBytes
 
-		showFile(w, r, "members.html", "")
+			err := rows.Scan(&Id, &Pos, &Email, &Pass, &Name, &Note, &Tel, &Adrs, &Nic, &Act, &Dob)
+			checkErr(err, errDBquery)
+
+			tmp.Id = Id.Int64
+			tmp.Pos = Pos.String
+			tmp.Email = Email.String
+			tmp.Pass = Pass.String
+			tmp.Name = Name.String
+			tmp.Note = Note.String
+			tmp.Tel = Tel.String
+			tmp.Adrs = Adrs.String
+			tmp.Nic = Nic.String
+			tmp.Act = false
+			if Act.String == "Active" {
+				tmp.Act = true
+			}
+			tmp.Dob = string(Dob)
+
+			i, _ := strconv.Atoi(strings.Split(tmp.Dob, "/")[2])
+
+			tmp.Age =time.Now().Year() - i
+
+			tmp.Image = "./users/u"+strconv.FormatInt(tmp.Id,10)+".jpg"
+			if _, err := os.Stat("./helper/users/u"+strconv.FormatInt(tmp.Id,10)+".jpg"); os.IsNotExist(err) {
+				// path/to/whatever does not exist
+				tmp.Image = "./users/u-1.jpg"
+			}
+			tmp.ActPan = ActPan
+			ActPan = false
+
+			membersData.Members = append(membersData.Members, tmp)
+		}
+
+		showFile(w, r, "members.html", membersData)
 	}else {
 		login(w,r)
 	}
+}
+
+func newMember(w http.ResponseWriter, r *http.Request) {
+	if(r.Method == "POST"){
+		r.ParseMultipartForm(32 << 20)
+
+		name := r.FormValue("name")
+		debugMSG(name)
+
+		file, _, err := r.FormFile("uploadfile")
+		if err == nil {
+			f, err := os.OpenFile("./helper/users/"+"u"+r.FormValue("id")+".jpg", os.O_WRONLY|os.O_CREATE, 0666)
+			checkErr(err, errFileUpload)
+
+			defer f.Close()
+			io.Copy(f, file)
+			defer file.Close()
+		}
+		insertData("user",r.FormValue("id") + ", '"+r.FormValue("pos")+"', '"+r.FormValue("email")+"', '"+r.FormValue("pass")+"', '"+r.FormValue("name")+"', '"+r.FormValue("note")+"', '"+r.FormValue("tel")+"', '"+r.FormValue("adrs")+"', '"+r.FormValue("nic")+"', '"+r.FormValue("act")+"', '"+r.FormValue("dob")+"'")
+	}
+	http.Redirect(w, r, "members.html", http.StatusSeeOther)
+}
+
+func updateMember(w http.ResponseWriter, r *http.Request) {
+	if(r.Method == "POST"){
+		r.ParseMultipartForm(32 << 20)
+
+		name := r.FormValue("name")
+		debugMSG(name)
+
+		file, _, err := r.FormFile("uploadfile")
+		if err == nil {
+			f, err := os.OpenFile("./helper/users/"+"u"+r.FormValue("id")+".jpg", os.O_WRONLY|os.O_CREATE, 0666)
+			checkErr(err, errFileUpload)
+
+			defer f.Close()
+			io.Copy(f, file)
+			defer file.Close()
+		}
+		updateData("user",r.FormValue("id"),"pos='"+r.FormValue("pos")+"', email='"+r.FormValue("email")+"', name='"+r.FormValue("name")+"', note='"+r.FormValue("note")+"', tel='"+r.FormValue("tel")+"', adrs='"+r.FormValue("adrs")+"', nic='"+r.FormValue("nic")+"', act='"+r.FormValue("act")+"', dob='"+r.FormValue("dob")+"'")
+
+		if(len(r.FormValue("pass")) != 0){
+			updateData("user",r.FormValue("id"),"pass='"+r.FormValue("pass")+"'")
+		}
+	}
+	http.Redirect(w, r, "members.html", http.StatusSeeOther)
 }
 
 func login(w http.ResponseWriter, r *http.Request) {
 	if(checkUserValid(w,r)){
 		index(w,r)
 	}else {
-		showFile(w, r, "login.html", "")
+		showFile(w, r, "login.html","")
 	}
+}
+
+func test(w http.ResponseWriter, r *http.Request) {
+	showFile(w, r, "test.html", "")
 }
 
 func mainSearch(w http.ResponseWriter, r *http.Request) {
@@ -314,15 +442,43 @@ func mainSearch(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func upload(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("method:", r.Method)
 
+	r.ParseMultipartForm(32 << 20)
+
+	name := r.FormValue("name")
+	debugMSG(name)
+
+	file, handler, err := r.FormFile("uploadfile")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer file.Close()
+	fmt.Fprintf(w, "%v", handler.Header)
+	f, err := os.OpenFile("./helper/users/"+handler.Filename, os.O_WRONLY|os.O_CREATE, 0666)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer f.Close()
+	io.Copy(f, file)
+}
 
 func main() {
 	initDatabase()
 
+	http.HandleFunc("/test.html", test)
 	http.HandleFunc("/login.html", login)
 	http.HandleFunc("/index.html", index)
+
 	http.HandleFunc("/members.html", members)
+	http.HandleFunc("/newMember.html", newMember)
+	http.HandleFunc("/updateMember.html", updateMember)
+
 	http.HandleFunc("/main_search.html", mainSearch)
+	http.HandleFunc("/upload", upload)
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if (r.URL.Path == "/") {

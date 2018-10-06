@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS user (
     id INT PRIMARY KEY,
     pos VARCHAR(255),
-    u_name VARCHAR(255),
+    email VARCHAR(255),
     pass VARCHAR(255),
     name VARCHAR(255),
     note VARCHAR(255),
