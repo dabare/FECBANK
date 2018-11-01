@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS user (
     id INT PRIMARY KEY,
-    pos VARCHAR(255),
+    userType_id INT,
+    status VARCHAR(255),
     email VARCHAR(255),
     pass VARCHAR(255),
     name VARCHAR(255),
@@ -10,6 +11,11 @@ CREATE TABLE IF NOT EXISTS user (
     nic VARCHAR(255),
     act VARCHAR(255),
     dob DATE
+);
+
+CREATE TABLE IF NOT EXISTS userType (
+    id INT PRIMARY KEY,
+    typ VARCHAR(255)
 );
 
 CREATE TABLE IF NOT EXISTS account (

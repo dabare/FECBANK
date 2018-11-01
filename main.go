@@ -7,7 +7,8 @@ import (
 	"html/template"
 	"database/sql"
 	//_ "github.com/mattn/go-sqlite3"
-	_ "github.com/mxk/go-sqlite/sqlite3"
+	//_ "github.com/mxk/go-sqlite/sqlite3"
+	_ "github.com/go-sql-driver/mysql"
 	"strconv"
 	"strings"
 	"time"
@@ -48,12 +49,26 @@ func readFile(path string) string {
 
 var homepage = true
 
-type SiteData struct {
+type UserData struct {
 	Uname	string
 	Uid 	int64
 	Utype	string
 	NavColaps	bool
+}
+
+type SiteData struct {
+	UserData UserData
 	Data interface{}
+}
+
+func convertDateWeb2MySQL(date string) string {
+	gotDate:= strings.Split(date, "/")
+	return gotDate[2] + "-" + gotDate[0] + "-" + gotDate[1]
+}
+
+func convertDateMYSQL2Web(date string) string {
+	gotDate:= strings.Split(date, "-")
+	return gotDate[1] + "/" + gotDate[2] + "/" + gotDate[0]
 }
 
 func setCookie(w http.ResponseWriter,Name string, Value string)  {
@@ -126,7 +141,10 @@ func initDatabase() {
 
 func getResultDB(query string) *sql.Rows {
 	debugMSG(query)
-	database, _ := sql.Open("sqlite3", "./database/" + dbName + ".db")
+
+	database, _ := sql.Open("mysql", "root:aelo@tcp(127.0.0.1:3306)/"+dbName)
+
+	//database, _ := sql.Open("sqlite3", "./database/" + dbName + ".db")
 
 	rows, err := database.Query(query)
 	checkErr(err, errDBquery)
@@ -138,7 +156,9 @@ func getResultDB(query string) *sql.Rows {
 
 func executeDB(exe string) {
 	debugMSG(exe)
-	database, _ := sql.Open("sqlite3", "./database/" + dbName + ".db")
+	database, _ := sql.Open("mysql", "root:aelo@tcp(127.0.0.1:3306)/"+dbName)
+
+	//database, _ := sql.Open("sqlite3", "./database/" + dbName + ".db")
 	_, err := database.Exec(exe)
 	checkErr(err, errDBquery)
 	database.Close()
@@ -182,10 +202,10 @@ func checkUserValid(w http.ResponseWriter, r *http.Request) bool {
 func addUserInfo(w http.ResponseWriter, r *http.Request,siteData *SiteData)  {
 
 	setCookie(w,"uid","1")
-	siteData.Uid = 1
-	siteData.Uname = "Nimeshi Wickramasinghe"
-	siteData.Utype = "Treasurere"
-	siteData.NavColaps = NavColaps(w,r)
+	siteData.UserData.Uid = 1
+	siteData.UserData.Uname = "Nimeshi Wickramasinghe"
+	siteData.UserData.Utype = "Treasurere"
+	siteData.UserData.NavColaps = NavColaps(w,r)
 }
 
 const (
@@ -253,6 +273,10 @@ func openbrowser(url string) {
 	}
 }
 
+func int2Str(in int64) string {
+	return strconv.FormatInt(in, 10)
+}
+
 func int2floatStr(in int64) string {
 	val := in / 100
 	diff := in - (val * 100)
@@ -292,9 +316,88 @@ func index(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+type MemberType struct {
+	Id	int64
+	Typ 	string
+	Dlt	bool
+}
+
+func isMemberTypeDeletable(id int64) bool{
+	rows := getResultDB("SELECT COUNT(id) FROM user WHERE userType_id= " + int2Str(id))
+
+	var count sql.NullInt64
+	for rows.Next() {
+		err := rows.Scan(&count)
+		checkErr(err, errDBquery)
+	}
+	rows.Close()
+	deletable:= true
+	if(count.Int64>0){
+		deletable=false
+	}
+	return deletable
+}
+
+func getMemberTypes()[]MemberType{
+	var ret	[]MemberType
+	rows := getResultDB("SELECT * FROM userType ORDER BY typ ASC")
+
+	for rows.Next(){
+		tmp := MemberType{}
+
+		var Id 		sql.NullInt64
+		var Typ 	sql.NullString
+
+		err := rows.Scan(&Id, &Typ)
+		checkErr(err, errDBquery)
+
+		tmp.Id = Id.Int64
+		tmp.Typ = Typ.String
+		tmp.Dlt = isMemberTypeDeletable(tmp.Id)
+		ret = append(ret,tmp)
+	}
+	rows.Close()
+	return ret
+}
+
+type SettingsData struct {
+	NewType 	int64
+	Types		[]MemberType
+}
+
+func settings(w http.ResponseWriter, r *http.Request) {
+	if(checkUserValid(w,r)){
+		settingsData := SettingsData{getNextID("userType"),getMemberTypes()}
+		showFile(w, r, "settings.html", settingsData)
+	}else {
+		login(w,r)
+	}
+}
+
+func newMemberType(w http.ResponseWriter, r *http.Request) {
+	if(r.Method == "POST"){
+		insertData("userType",r.FormValue("id") +", '"+r.FormValue("typ")+"'")
+	}
+	http.Redirect(w, r, "settings.html", http.StatusSeeOther)
+}
+
+func updateMemberType(w http.ResponseWriter, r *http.Request) {
+	if(r.Method == "POST"){
+		if(r.FormValue("action") == "save"){
+			updateData("userType",r.FormValue("id"),"Typ='"+r.FormValue("typ")+"'")
+		}else if(r.FormValue("action") == "delete"){
+			deleteData("userType",r.FormValue("id"))
+		}
+
+	}
+	http.Redirect(w, r, "settings.html", http.StatusSeeOther)
+}
+
 type MemberData struct {
 	Id 	int64
+	UserType_id 	int64
 	Pos 	string
+	Status 	string
 	Email 	string
 	Pass 	string
 	Name 	string
@@ -312,11 +415,25 @@ type MemberData struct {
 type MembersData struct {
 	NextId	int64
 	Members []MemberData
+	MemberTypes []MemberType
+}
+
+func getMemberType(id int64) string{
+	rows := getResultDB("SELECT typ FROM userType WHERE id = " + int2Str(id))
+	var typ  sql.NullString
+
+	for rows.Next() {
+		err := rows.Scan(&typ)
+		checkErr(err, errDBquery)
+	}
+
+	rows.Close()
+	return typ.String
 }
 
 func members(w http.ResponseWriter, r *http.Request) {
 	if(checkUserValid(w,r)){
-		membersData := MembersData{getNextID("user"),nil}
+		membersData := MembersData{getNextID("user"),nil,getMemberTypes()}
 
 		rows := getResultDB("SELECT * FROM user ORDER BY name ASC")
 		ActPan := true
@@ -324,7 +441,8 @@ func members(w http.ResponseWriter, r *http.Request) {
 			tmp := MemberData{}
 
 			var Id 		sql.NullInt64
-			var Pos 	sql.NullString
+			var UserType_id 	sql.NullInt64
+			var Status 	sql.NullString
 			var Email 	sql.NullString
 			var Pass 	sql.NullString
 			var Name 	sql.NullString
@@ -335,11 +453,12 @@ func members(w http.ResponseWriter, r *http.Request) {
 			var Act 	sql.NullString
 			var Dob 	sql.RawBytes
 
-			err := rows.Scan(&Id, &Pos, &Email, &Pass, &Name, &Note, &Tel, &Adrs, &Nic, &Act, &Dob)
+			err := rows.Scan(&Id, &UserType_id, &Status, &Email, &Pass, &Name, &Note, &Tel, &Adrs, &Nic, &Act, &Dob)
 			checkErr(err, errDBquery)
 
 			tmp.Id = Id.Int64
-			tmp.Pos = Pos.String
+			tmp.Pos = getMemberType(UserType_id.Int64)
+			tmp.Status = Status.String
 			tmp.Email = Email.String
 			tmp.Pass = Pass.String
 			tmp.Name = Name.String
@@ -348,10 +467,11 @@ func members(w http.ResponseWriter, r *http.Request) {
 			tmp.Adrs = Adrs.String
 			tmp.Nic = Nic.String
 			tmp.Act = false
+			tmp.UserType_id = UserType_id.Int64
 			if Act.String == "Active" {
 				tmp.Act = true
 			}
-			tmp.Dob = string(Dob)
+			tmp.Dob = convertDateMYSQL2Web(string(Dob))
 
 			i, _ := strconv.Atoi(strings.Split(tmp.Dob, "/")[2])
 
@@ -367,7 +487,7 @@ func members(w http.ResponseWriter, r *http.Request) {
 
 			membersData.Members = append(membersData.Members, tmp)
 		}
-
+		rows.Close()
 		showFile(w, r, "members.html", membersData)
 	}else {
 		login(w,r)
@@ -390,7 +510,8 @@ func newMember(w http.ResponseWriter, r *http.Request) {
 			io.Copy(f, file)
 			defer file.Close()
 		}
-		insertData("user",r.FormValue("id") + ", '"+r.FormValue("pos")+"', '"+r.FormValue("email")+"', '"+r.FormValue("pass")+"', '"+r.FormValue("name")+"', '"+r.FormValue("note")+"', '"+r.FormValue("tel")+"', '"+r.FormValue("adrs")+"', '"+r.FormValue("nic")+"', '"+r.FormValue("act")+"', '"+r.FormValue("dob")+"'")
+
+		insertData("user",r.FormValue("id") + ", "+r.FormValue("userType_id")+" , '"+r.FormValue("status")+"', '"+r.FormValue("email")+"', '"+r.FormValue("pass")+"', '"+r.FormValue("name")+"', '"+r.FormValue("note")+"', '"+r.FormValue("tel")+"', '"+r.FormValue("adrs")+"', '"+r.FormValue("nic")+"', '"+r.FormValue("act")+"', '"+convertDateWeb2MySQL(r.FormValue("dob"))+"'")
 	}
 	http.Redirect(w, r, "members.html", http.StatusSeeOther)
 }
@@ -411,7 +532,7 @@ func updateMember(w http.ResponseWriter, r *http.Request) {
 			io.Copy(f, file)
 			defer file.Close()
 		}
-		updateData("user",r.FormValue("id"),"pos='"+r.FormValue("pos")+"', email='"+r.FormValue("email")+"', name='"+r.FormValue("name")+"', note='"+r.FormValue("note")+"', tel='"+r.FormValue("tel")+"', adrs='"+r.FormValue("adrs")+"', nic='"+r.FormValue("nic")+"', act='"+r.FormValue("act")+"', dob='"+r.FormValue("dob")+"'")
+		updateData("user",r.FormValue("id"),"userType_id="+r.FormValue("userType_id")+", status='"+r.FormValue("status")+"', email='"+r.FormValue("email")+"', name='"+r.FormValue("name")+"', note='"+r.FormValue("note")+"', tel='"+r.FormValue("tel")+"', adrs='"+r.FormValue("adrs")+"', nic='"+r.FormValue("nic")+"', act='"+r.FormValue("act")+"', dob='"+convertDateWeb2MySQL(r.FormValue("dob"))+"'")
 
 		if(len(r.FormValue("pass")) != 0){
 			updateData("user",r.FormValue("id"),"pass='"+r.FormValue("pass")+"'")
@@ -420,12 +541,34 @@ func updateMember(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "members.html", http.StatusSeeOther)
 }
 
+func savingsDiposits(w http.ResponseWriter, r *http.Request) {
+	if(checkUserValid(w,r)){
+		showFile(w, r, "savingsDiposits.html", "")
+	}else {
+		login(w,r)
+	}
+}
+
+func banks(w http.ResponseWriter, r *http.Request) {
+	if(checkUserValid(w,r)){
+
+		showFile(w, r, "banks.html", "")
+	}else {
+		login(w,r)
+	}
+}
+
+
 func login(w http.ResponseWriter, r *http.Request) {
 	if(checkUserValid(w,r)){
-		index(w,r)
+		http.Redirect(w, r, "index.html", http.StatusSeeOther)
 	}else {
 		showFile(w, r, "login.html","")
 	}
+}
+
+func logout(w http.ResponseWriter, r *http.Request) {
+	http.Redirect(w, r, "login.html", http.StatusSeeOther)
 }
 
 func test(w http.ResponseWriter, r *http.Request) {
@@ -442,43 +585,29 @@ func mainSearch(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func upload(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("method:", r.Method)
-
-	r.ParseMultipartForm(32 << 20)
-
-	name := r.FormValue("name")
-	debugMSG(name)
-
-	file, handler, err := r.FormFile("uploadfile")
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	defer file.Close()
-	fmt.Fprintf(w, "%v", handler.Header)
-	f, err := os.OpenFile("./helper/users/"+handler.Filename, os.O_WRONLY|os.O_CREATE, 0666)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	defer f.Close()
-	io.Copy(f, file)
-}
 
 func main() {
-	initDatabase()
+	//initDatabase()
 
 	http.HandleFunc("/test.html", test)
 	http.HandleFunc("/login.html", login)
+	http.HandleFunc("/logout.html", logout)
 	http.HandleFunc("/index.html", index)
+
+	http.HandleFunc("/settings.html", settings)
+	http.HandleFunc("/newMemberType.html", newMemberType)
+	http.HandleFunc("/updateMemberType.html", updateMemberType)
 
 	http.HandleFunc("/members.html", members)
 	http.HandleFunc("/newMember.html", newMember)
 	http.HandleFunc("/updateMember.html", updateMember)
 
+	http.HandleFunc("/savingsDiposits.html", savingsDiposits)
+
+	http.HandleFunc("/banks.html", banks)
+
+
 	http.HandleFunc("/main_search.html", mainSearch)
-	http.HandleFunc("/upload", upload)
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if (r.URL.Path == "/") {

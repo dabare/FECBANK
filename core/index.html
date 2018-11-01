@@ -19,13 +19,11 @@
 <link href="css/style.css" rel="stylesheet">
 
 
-<body {{if .NavColaps}} class='mini-navbar' {{end}}>
+<body {{if .UserData.NavColaps}} class='mini-navbar' {{end}}>
 
-<input hidden id="Uname" value="{{.Uname}}">
-<input hidden id="Utype" value="{{.Utype}}">
 
 <div id="wrapper">
-    {{ template "navbar_left" }}
+    {{ template "navbar_left" .UserData}}
 
     <div id="page-wrapper" class="gray-bg dashbard-1">
         {{ template "navbar_top" }}

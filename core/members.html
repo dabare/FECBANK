@@ -24,13 +24,10 @@
 <link href="css/plugins/datapicker/datepicker3.css" rel="stylesheet">
 
 
-<body {{if .NavColaps}} class='mini-navbar' {{end}}>
-
-<input hidden id="Uname" value="{{.Uname}}">
-<input hidden id="Utype" value="{{.Utype}}">
+<body {{if .UserData.NavColaps}} class='mini-navbar' {{end}}>
 
 <div id="wrapper">
-    {{ template "navbar_left" }}
+    {{ template "navbar_left" .UserData}}
 
     <div id="page-wrapper" class="gray-bg dashbard-1">
         {{ template "navbar_top" }}
@@ -84,7 +81,8 @@
                                                             {{.Name}}
                                                             </a>
                                                         </td>
-                                                        <td> {{.Adrs}}</td>
+                                                        <td> {{.Pos}}</td>
+                                                        <td>{{.Status}}</td>
                                                         <td class="contact-type"><i class="fa fa-phone"> </i></td>
                                                         <td> {{.Tel}}</td>
                                                         <td class="client-status">
@@ -233,19 +231,24 @@
                                 <div class="form-group"><label>Name</label> <input type="text" placeholder="Enter name" class="form-control" name="name" required></div>
 
                                 <div class="form-group"><label>Position</label>
-                                    <select class="select2_demo_3 form-control" style="width: 260px;" name="pos">
-                                        <option value="Member">Member</option>
-                                        <option value="Treasurere">Treasurere</option>
-                                        <option value="Manager">Manager</option>
+                                    <select class="select2_demo_3 form-control" style="width: 260px;" name="userType_id">
+                                        {{range .Data.MemberTypes}}
+                                        <option value="{{.Id}}">{{.Typ}}</option>
+                                        {{end}}
                                     </select>
                                 </div>
 
-
+                                <div class="form-group"><label>Status</label>
+                                    <select class="select2_demo_3 form-control" style="width: 260px;" name="status">
+                                        <option value="Student">Student</option>
+                                        <option value="Employee">Employee</option>
+                                    </select>
+                                </div>
 
                                 <label>Preview Image</label>
                                 <input type='file' id="imgInpNewMem"  accept="image/*" name="uploadfile" />
                                 <br>
-                                <img id="imgPrvNewMem" src="./users/u-1.jpg" style="width: 200px; height: 200px;"/>
+                                <img id="imgPrvNewMem" src="./users/u-1.jpg" style="width: 150px; height: 150px;"/>
                                 <br>
 
                                 <label>Note</label>
@@ -271,7 +274,7 @@
 
                                 <div class="form-group"><label>Reset Password</label> <input name="pass" type="text" placeholder="Enter default password" class="form-control" required value="member123"></div>
                                 <div class="form-group"><label> <input type="checkbox" value="Active" checked="" name="act"> <i></i>Active User</label></div>
-
+                                <br>
                                 <div>
                                     <button class="btn btn-sm btn-primary pull-right m-t-n-xs" type="submit"><strong>Save</strong></button>
                                 </div>
@@ -283,7 +286,7 @@
             </div>
         </div>
     </div>
-
+    {{$MemberTypes := .Data.MemberTypes}}
     {{range .Data.Members}}
     <div id="editMember{{.Id}}" class="modal fade" aria-hidden="true">
         <div class="modal-dialog">
@@ -297,19 +300,25 @@
                                 <div class="form-group"><label>Name</label> <input type="text" placeholder="Enter name" class="form-control" name="name" required value="{{.Name}}"></div>
 
                                 <div class="form-group"><label>Position</label>
-                                    <select class="select2_demo_3 form-control" style="width: 260px;" name="pos">
-                                        <option value="Member" {{if eq .Pos "Member"}}selected{{end}}>Member</option>
-                                        <option value="Treasurere" {{if eq .Pos "Treasurere"}}selected{{end}}>Treasurere</option>
-                                        <option value="Manager" {{if eq .Pos "Manager"}}selected{{end}}>Manager</option>
+                                    {{$Type := .UserType_id}}
+                                    <select class="select2_demo_3 form-control" style="width: 260px;" name="userType_id">
+                                        {{range $MemberTypes}}
+                                        <option value="{{.Id}}" {{if eq .Id $Type}}selected{{end}} >{{.Typ}}</option>
+                                        {{end}}
                                     </select>
                                 </div>
 
-
+                                <div class="form-group"><label>Status</label>
+                                    <select class="select2_demo_3 form-control" style="width: 260px;" name="status">
+                                        <option value="Student" {{if eq .Status "Student"}}selected{{end}}>Student</option>
+                                        <option value="Employee" {{if eq .Status "Employee"}}selected{{end}}>Employee</option>
+                                    </select>
+                                </div>
 
                                 <label>Preview Image</label>
                                 <input type='file' id="imgInpMem{{.Id}}"  accept="image/*" name="uploadfile" />
                                 <br>
-                                <img id="imgPrvMem{{.Id}}" src="{{.Image}}" style="width: 200px; height: 200px;"/>
+                                <img id="imgPrvMem{{.Id}}" src="{{.Image}}" style="width: 150px; height: 150px;"/>
                                 <br>
 
                                 <label>Note</label>
@@ -335,10 +344,10 @@
 
                                 <div class="form-group"><label>Reset Password</label> <input name="pass" type="text" placeholder="Enter default password" class="form-control" value=""></div>
                                 <div class="form-group"><label> <input type="checkbox" value="Active"  {{if .Act}} checked="" {{end}}  name="act"> <i></i>Active User</label></div>
-
+                                <br>
                                 <div>
+                                    <button class="btn btn-sm btn-primary pull-right m-t-n-xs" type="submit" value="save"><strong>Update</strong></button>
                                     <button class="btn btn-sm btn-danger m-t-n-xs" type="submit" value="delete"><strong>Delete</strong></button>
-                                    <button class="btn btn-sm btn-primary pull-right m-t-n-xs" type="submit" value="save"><strong>Save</strong></button>
                                 </div>
 
                             </div>

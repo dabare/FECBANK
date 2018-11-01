@@ -4,23 +4,21 @@
             <ul class="nav metismenu" id="side-menu">
                 <li class="nav-header">
                     <div class="dropdown profile-element"> <span>
-                            <img id="userImage" alt="image" class="img-circle" src="" style="max-width:30%; max-height:30%;"/>
+                            <img id="userImage" alt="image" class="img-circle" src="./users/u{{.Uid}}.jpg" style="max-width:30%; max-height:30%;"/>
                         </span>
                         <a data-toggle="dropdown" class="dropdown-toggle" href="#">
                             <span class="clear"> <span class="block m-t-xs">
                                 <strong class="font-bold">
-                                    <span id="userName"></span>
+                                    {{.Uname}}
                                 </strong>
                             </span> <span class="text-muted text-xs block">
-                                 <span id="userType"></span>
+                                 {{.Utype}}
 
                                 <b class="caret"></b></span> </span> </a>
                         <ul class="dropdown-menu animated fadeInRight m-t-xs">
                             <li><a href="profile.html">Profile</a></li>
-                            <li><a href="contacts.html">Contacts</a></li>
-                            <li><a href="mailbox.html">Mailbox</a></li>
                             <li class="divider"></li>
-                            <li><a href="login.html">Logout</a></li>
+                            <li><a href="logout.html">Logout</a></li>
                         </ul>
                     </div>
                     <div class="logo-element">
@@ -33,20 +31,33 @@
                     <a href="index.html"><i class="fa fa-th-large"></i> <span class="nav-label">Summary</span></a>
                 </li>
                 <li id="invesments">
-                    <a href="invesments.html"><i class="fa fa-money"></i> <span
-                            class="nav-label">Invesments</span></a>
-                </li>
-                <li id="banks">
-                    <a href="banks.html"><i class="fa fa-bank"></i> <span class="nav-label">Banks</span></a>
+                    <a href="#"><i class="fa fa-money"></i> <span class="nav-label">Invesments</span><span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level collapse">
+                        <li id="projects"><a href="projects.html">Projects</a></li>
+                        <li id="fd"><a href="fixedDeposits.html">FDs</a></li>
+                        <li id="banks"><a href="banks.html">Banks</a></li>
+                    </ul>
                 </li>
                 <li id="loans">
-                    <a href="loans.html"><i class="fa fa-upload"></i> <span class="nav-label">Loans</span></a>
+                   <a href="#"><i class="fa fa-upload"></i> <span class="nav-label">Loans</span><span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level collapse">
+                        <li id="allLoans"><a href="loans.html">All loans</a></li>
+                        <li id="loanDiposits"><a href="loanDeposits.html">Deposit</a></li>
+                    </ul>
                 </li>
-                <li id="accounts">
-                    <a href="accounts.html"><i class="fa fa-folder-open"></i> <span class="nav-label">Accounts</span></a>
+                <li id="savings">
+                    <a href="#"><i class="fa fa-folder-open"></i> <span class="nav-label">Savings</span><span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level collapse">
+                        <li id="allSavings"><a href="deposit.html">All Savings</a></li>
+                        <li id="savingsDiposits"><a href="savingsDiposits.html">Deposit Ledger</a></li>
+                        <li id="savingsWithdraw"><a href="savingsWithdraw.html">Withdraw</a></li>
+                    </ul>
                 </li>
                 <li id="members">
                     <a href="members.html"><i class="fa fa-users"></i> <span class="nav-label">Members</span></a>
+                </li>
+                <li id="settings">
+                    <a href="settings.html"><i class="fa fa-cogs"></i> <span class="nav-label">Settings</span></a>
                 </li>
             </ul>
 
