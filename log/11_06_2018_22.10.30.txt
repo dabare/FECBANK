@@ -1,0 +1,23 @@
+2018/11/06 22:10:30 <nil>
+2018/11/06 22:10:30 http: panic serving [::1]:42374: <nil>
+goroutine 154 [running]:
+net/http.(*conn).serve.func1(0xc420083d60)
+	/usr/local/go/src/net/http/server.go:1697 +0xd0
+panic(0x754a80, 0xc420163b70)
+	/usr/local/go/src/runtime/panic.go:491 +0x283
+log.Panic(0xc420319968, 0x1, 0x1)
+	/usr/local/go/src/log/log.go:330 +0xc0
+main.checkErr(0x9a4fc0, 0xc420163b60, 0x2)
+	/media/angelo/Dont Touch/DOCS/FEC Bank/dev/main.go:158 +0x156
+main.members(0x9aa000, 0xc4201809a0, 0xc420122800)
+	/media/angelo/Dont Touch/DOCS/FEC Bank/dev/main.go:498 +0x4e9
+net/http.HandlerFunc.ServeHTTP(0x7f7b48, 0x9aa000, 0xc4201809a0, 0xc420122800)
+	/usr/local/go/src/net/http/server.go:1918 +0x44
+net/http.(*ServeMux).ServeHTTP(0x9e3300, 0x9aa000, 0xc4201809a0, 0xc420122800)
+	/usr/local/go/src/net/http/server.go:2254 +0x130
+net/http.serverHandler.ServeHTTP(0xc420081790, 0x9aa000, 0xc4201809a0, 0xc420122800)
+	/usr/local/go/src/net/http/server.go:2619 +0xb4
+net/http.(*conn).serve(0xc420083d60, 0x9aa640, 0xc42005e980)
+	/usr/local/go/src/net/http/server.go:1801 +0x71d
+created by net/http.(*Server).Serve
+	/usr/local/go/src/net/http/server.go:2720 +0x288

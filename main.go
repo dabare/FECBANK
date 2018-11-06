@@ -29,6 +29,8 @@ var errSevingHelper = 5
 var errFileUpload = 6
 var errFileDelete = 7
 
+var cookieUserId = "asdhfdbcfjksdfyfedefrw"
+
 var dbName = "FEC"
 
 var debugCount = 0
@@ -52,8 +54,9 @@ var homepage = true
 
 type UserData struct {
 	Uname	string
-	Uid 	int64
+	Uid 	string
 	Utype	string
+	Uimage	string
 	NavColaps	bool
 }
 
@@ -63,7 +66,7 @@ type SiteData struct {
 }
 
 func Date(year, month, day int) time.Time {
-    return time.Date(year, time.Month(month), day, 0, 0, 0, 0, time.UTC)
+	return time.Date(year, time.Month(month), day, 0, 0, 0, 0, time.UTC)
 }
 
 func daysUptoNowMysql(from string) int {
@@ -217,46 +220,55 @@ func getNextID(table string) int64 {
 }
 
 func checkUserValid(w http.ResponseWriter, r *http.Request) bool {
-	return true
+	ret := false
+	tmp , err := r.Cookie(cookieUserId)
+	if(err==nil){
+		rows := getResultDB("select name  from user WHERE id=" + tmp.Value)
+		for rows.Next(){
+			ret = true
+		}
+		rows.Close()
+	}
+
+	return ret
 }
 
 func addUserInfo(w http.ResponseWriter, r *http.Request,siteData *SiteData)  {
-
-	setCookie(w,"uid","1")
-	siteData.UserData.Uid = 1
-	siteData.UserData.Uname = "Nimeshi Wickramasinghe"
-	siteData.UserData.Utype = "Treasurere"
+	siteData.UserData.Uid = "-1"
+	siteData.UserData.Uname = ""
+	siteData.UserData.Utype = ""
 	siteData.UserData.NavColaps = NavColaps(w,r)
-}
 
-const (
-	stdLongMonth = "January"
-	stdMonth = "Jan"
-	stdNumMonth = "1"
-	stdZeroMonth = "01"
-	stdLongWeekDay = "Monday"
-	stdWeekDay = "Mon"
-	stdDay = "2"
-	stdUnderDay = "_2"
-	stdZeroDay = "02"
-	stdHour = "15"
-	stdHour12 = "3"
-	stdZeroHour12 = "03"
-	stdMinute = "4"
-	stdZeroMinute = "04"
-	stdSecond = "5"
-	stdZeroSecond = "05"
-	stdLongYear = "2006"
-	stdYear = "06"
-	stdPM = "PM"
-	stdpm = "pm"
-	stdTZ = "MST"
-	stdISO8601TZ = "Z0700"  // prints Z for UTC
-	stdISO8601ColonTZ = "Z07:00" // prints Z for UTC
-	stdNumTZ = "-0700"  // always numeric
-	stdNumShortTZ = "-07"    // always numeric
-	stdNumColonTZ = "-07:00" // always numeric
-)
+	if(checkUserValid(w,r)){
+		tmp , err := r.Cookie(cookieUserId)
+		if(err==nil){
+			rows := getResultDB("SELECT user.name, userType.typ FROM user LEFT JOIN userType ON user.userType_id = userType.id WHERE user.id=" + tmp.Value)
+
+			var name sql.NullString
+			var typ sql.NullString
+
+			for rows.Next(){
+				err := rows.Scan(&name, &typ)
+				checkErr(err, errDBquery)
+			}
+
+			rows.Close()
+
+			siteData.UserData.Uid = tmp.Value
+			siteData.UserData.Uname = name.String
+			siteData.UserData.Utype = typ.String
+
+			siteData.UserData.Uimage = "./users/u"+tmp.Value+".jpg"
+			if _, err := os.Stat("./helper/users/u"+tmp.Value+".jpg"); os.IsNotExist(err) {
+				// path/to/whatever does not exist
+				siteData.UserData.Uimage = "./users/u-1.jpg"
+			}
+
+		}else {
+		}
+	}else {
+	}
+}
 
 func startService() {
 	//err := http.ListenAndServeTLS(":8080", "hostcert.pem", "hostkey.pem", nil)
@@ -429,6 +441,7 @@ type MemberData struct {
 	Nic 	string
 	Act 	bool
 	Dob 	string
+	Member_since	string
 	Typ	string
 	Age 	int
 	Image	string
@@ -438,6 +451,7 @@ type MemberData struct {
 
 type MembersData struct {
 	NextId	int64
+	Today	string
 	Members []MemberData
 	MemberTypes []MemberType
 }
@@ -459,7 +473,7 @@ func isMemberDeletable(id string) bool {
 
 func members(w http.ResponseWriter, r *http.Request) {
 	if(checkUserValid(w,r)){
-		membersData := MembersData{getNextID("user"),nil,getMemberTypes()}
+		membersData := MembersData{getNextID("user"),getTodayToWeb(), nil,getMemberTypes()}
 
 		rows := getResultDB("SELECT user.*, userType.typ FROM user LEFT JOIN userType ON user.userType_id = userType.id")
 		ActPan := true
@@ -478,9 +492,10 @@ func members(w http.ResponseWriter, r *http.Request) {
 			var Nic 	sql.NullString
 			var Act 	sql.NullString
 			var Dob 	sql.RawBytes
+			var Member_since sql.RawBytes
 			var Typ		sql.NullString
 
-			err := rows.Scan(&Id, &UserType_id, &Status, &Email, &Pass, &Name, &Note, &Tel, &Adrs, &Nic, &Act, &Dob, &Typ)
+			err := rows.Scan(&Id, &UserType_id, &Status, &Email, &Pass, &Name, &Note, &Tel, &Adrs, &Nic, &Act, &Dob, &Member_since, &Typ)
 			checkErr(err, errDBquery)
 
 			tmp.Id = Id.Int64
@@ -498,6 +513,7 @@ func members(w http.ResponseWriter, r *http.Request) {
 				tmp.Act = true
 			}
 			tmp.Dob = convertDateMYSQL2Web(string(Dob))
+			tmp.Member_since = convertDateMYSQL2Web(string(Member_since))
 			tmp.Typ = Typ.String
 			i, _ := strconv.Atoi(strings.Split(tmp.Dob, "/")[2])
 
@@ -534,7 +550,7 @@ func newMember(w http.ResponseWriter, r *http.Request) {
 			defer file.Close()
 		}
 
-		insertData("user",r.FormValue("id") + ", "+r.FormValue("userType_id")+" , '"+r.FormValue("status")+"', '"+r.FormValue("email")+"', '"+r.FormValue("pass")+"', '"+r.FormValue("name")+"', '"+r.FormValue("note")+"', '"+r.FormValue("tel")+"', '"+r.FormValue("adrs")+"', '"+r.FormValue("nic")+"', '"+r.FormValue("act")+"', '"+convertDateWeb2MySQL(r.FormValue("dob"))+"'")
+		insertData("user",r.FormValue("id") + ", "+r.FormValue("userType_id")+" , '"+r.FormValue("status")+"', '"+r.FormValue("email")+"', '"+r.FormValue("pass")+"', '"+r.FormValue("name")+"', '"+r.FormValue("note")+"', '"+r.FormValue("tel")+"', '"+r.FormValue("adrs")+"', '"+r.FormValue("nic")+"', '"+r.FormValue("act")+"', '"+convertDateWeb2MySQL(r.FormValue("dob"))+"', '"+convertDateWeb2MySQL(r.FormValue("member_since"))+"'")
 	}
 	http.Redirect(w, r, "members.html", http.StatusSeeOther)
 }
@@ -553,7 +569,7 @@ func updateMember(w http.ResponseWriter, r *http.Request) {
 				io.Copy(f, file)
 				defer file.Close()
 			}
-			updateData("user",r.FormValue("id"),"userType_id="+r.FormValue("userType_id")+", status='"+r.FormValue("status")+"', email='"+r.FormValue("email")+"', name='"+r.FormValue("name")+"', note='"+r.FormValue("note")+"', tel='"+r.FormValue("tel")+"', adrs='"+r.FormValue("adrs")+"', nic='"+r.FormValue("nic")+"', act='"+r.FormValue("act")+"', dob='"+convertDateWeb2MySQL(r.FormValue("dob"))+"'")
+			updateData("user",r.FormValue("id"),"userType_id="+r.FormValue("userType_id")+", status='"+r.FormValue("status")+"', email='"+r.FormValue("email")+"', name='"+r.FormValue("name")+"', note='"+r.FormValue("note")+"', tel='"+r.FormValue("tel")+"', adrs='"+r.FormValue("adrs")+"', nic='"+r.FormValue("nic")+"', act='"+r.FormValue("act")+"', dob='"+convertDateWeb2MySQL(r.FormValue("dob"))+"', member_since='"+convertDateWeb2MySQL(r.FormValue("member_since"))+"'")
 
 			if(len(r.FormValue("pass")) != 0){
 				updateData("user",r.FormValue("id"),"pass='"+r.FormValue("pass")+"'")
@@ -727,12 +743,34 @@ func banks(w http.ResponseWriter, r *http.Request) {
 func login(w http.ResponseWriter, r *http.Request) {
 	if(checkUserValid(w,r)){
 		http.Redirect(w, r, "index.html", http.StatusSeeOther)
+	}else if(r.Method == "POST"){
+		r.ParseMultipartForm(32 << 20)
+
+		sqlStr := "SELECT id FROM user WHERE email='"+r.FormValue("email")+"' AND pass='"+r.FormValue("pass")+"'"
+
+		rows := getResultDB(sqlStr)
+
+		for rows.Next(){
+
+			var Id 		sql.NullInt64
+
+			err := rows.Scan(&Id, )
+			checkErr(err, errDBquery)
+
+			setCookie(w,cookieUserId,strconv.Itoa(int(Id.Int64)))
+		}
+		rows.Close()
+
+
+
+		http.Redirect(w, r, "index.html", http.StatusSeeOther)
 	}else {
 		showFile(w, r, "login.html","")
 	}
 }
 
 func logout(w http.ResponseWriter, r *http.Request) {
+	setCookie(w,cookieUserId,"-1")
 	http.Redirect(w, r, "login.html", http.StatusSeeOther)
 }
 

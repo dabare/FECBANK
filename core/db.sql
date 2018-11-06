@@ -10,7 +10,8 @@ CREATE TABLE IF NOT EXISTS user (
     adrs VARCHAR(255),
     nic VARCHAR(255),
     act VARCHAR(255),
-    dob DATE
+    dob DATE,
+    member_since DATE
 );
 
 CREATE TABLE IF NOT EXISTS userType (
