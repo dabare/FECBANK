@@ -27,6 +27,7 @@ var errDBquery = 2
 var errBrowser = 4
 var errSevingHelper = 5
 var errFileUpload = 6
+var errFileDelete = 7
 
 var dbName = "FEC"
 
@@ -59,6 +60,26 @@ type UserData struct {
 type SiteData struct {
 	UserData UserData
 	Data interface{}
+}
+
+func Date(year, month, day int) time.Time {
+    return time.Date(year, time.Month(month), day, 0, 0, 0, 0, time.UTC)
+}
+
+func daysUptoNowMysql(from string) int {
+	//YYYY-MM-DD
+	gotDate:= strings.Split(from, "-")
+	y,_ := strconv.Atoi(gotDate[0])
+	m,_ := strconv.Atoi(gotDate[1])
+	d,_ := strconv.Atoi(gotDate[2])
+
+	return int(time.Now().Sub(Date(y,m,d)).Hours()/24)
+}
+
+func getTodayToWeb() string{
+	currentTime := time.Now()
+	//MM/DD/YYY
+	return currentTime.Format("01/02/2006")
 }
 
 func convertDateWeb2MySQL(date string) string {
@@ -124,7 +145,7 @@ func checkErr(err error, typ int) {
 	if err == nil {
 		return
 	}
-	panic(err)
+	//panic(err)
 	switch typ {
 	default:
 		println("Error occured!, Please contact developer :)")
@@ -322,38 +343,38 @@ type MemberType struct {
 	Dlt	bool
 }
 
-func isMemberTypeDeletable(id int64) bool{
-	rows := getResultDB("SELECT COUNT(id) FROM user WHERE userType_id= " + int2Str(id))
-
-	var count sql.NullInt64
-	for rows.Next() {
-		err := rows.Scan(&count)
-		checkErr(err, errDBquery)
-	}
-	rows.Close()
-	deletable:= true
-	if(count.Int64>0){
-		deletable=false
-	}
-	return deletable
-}
-
 func getMemberTypes()[]MemberType{
 	var ret	[]MemberType
-	rows := getResultDB("SELECT * FROM userType ORDER BY typ ASC")
+	sqlStr := `SELECT userType.id, userType.typ, tmp2.count FROM
+	(SELECT COUNT(id) AS count, userType_id FROM
+	(SELECT user.id, userType.id AS userType_id, userType.typ FROM user
+	LEFT JOIN userType ON user.userType_id = userType.id
+	UNION
+	SELECT user.id, userType.id AS userType_id, userType.typ FROM user
+	RIGHT JOIN userType ON user.userType_id = userType.id
+	) AS tmp
+	GROUP BY userType_id) AS tmp2
+	LEFT JOIN userType
+	ON userType.id = tmp2.userType_id`
+
+	rows := getResultDB(sqlStr)
 
 	for rows.Next(){
 		tmp := MemberType{}
 
 		var Id 		sql.NullInt64
 		var Typ 	sql.NullString
+		var Count	sql.NullInt64
 
-		err := rows.Scan(&Id, &Typ)
+		err := rows.Scan(&Id, &Typ, &Count)
 		checkErr(err, errDBquery)
 
 		tmp.Id = Id.Int64
 		tmp.Typ = Typ.String
-		tmp.Dlt = isMemberTypeDeletable(tmp.Id)
+		tmp.Dlt = true
+		if Count.Int64>0{
+			tmp.Dlt = false
+		}
 		ret = append(ret,tmp)
 	}
 	rows.Close()
@@ -376,6 +397,7 @@ func settings(w http.ResponseWriter, r *http.Request) {
 
 func newMemberType(w http.ResponseWriter, r *http.Request) {
 	if(r.Method == "POST"){
+		r.ParseMultipartForm(32 << 20)
 		insertData("userType",r.FormValue("id") +", '"+r.FormValue("typ")+"'")
 	}
 	http.Redirect(w, r, "settings.html", http.StatusSeeOther)
@@ -383,8 +405,9 @@ func newMemberType(w http.ResponseWriter, r *http.Request) {
 
 func updateMemberType(w http.ResponseWriter, r *http.Request) {
 	if(r.Method == "POST"){
+		r.ParseMultipartForm(32 << 20)
 		if(r.FormValue("action") == "save"){
-			updateData("userType",r.FormValue("id"),"Typ='"+r.FormValue("typ")+"'")
+			updateData("userType",r.FormValue("id"),"typ='"+r.FormValue("typ")+"'")
 		}else if(r.FormValue("action") == "delete"){
 			deleteData("userType",r.FormValue("id"))
 		}
@@ -396,7 +419,6 @@ func updateMemberType(w http.ResponseWriter, r *http.Request) {
 type MemberData struct {
 	Id 	int64
 	UserType_id 	int64
-	Pos 	string
 	Status 	string
 	Email 	string
 	Pass 	string
@@ -407,9 +429,11 @@ type MemberData struct {
 	Nic 	string
 	Act 	bool
 	Dob 	string
+	Typ	string
 	Age 	int
 	Image	string
 	ActPan 	bool //current active pannel
+	Dlt 	bool
 }
 
 type MembersData struct {
@@ -418,24 +442,26 @@ type MembersData struct {
 	MemberTypes []MemberType
 }
 
-func getMemberType(id int64) string{
-	rows := getResultDB("SELECT typ FROM userType WHERE id = " + int2Str(id))
-	var typ  sql.NullString
-
-	for rows.Next() {
-		err := rows.Scan(&typ)
+func isMemberDeletable(id string) bool {
+	ret := true
+	rows := getResultDB("SELECT COUNT(id) FROM deposit WHERE user_id="+id+" OR fec_id="+id+" OR updated_id="+id)
+	var count sql.NullInt64
+	for rows.Next(){
+		err := rows.Scan(&count)
 		checkErr(err, errDBquery)
 	}
-
+	if count.Int64 > 0{
+		ret =false
+	}
 	rows.Close()
-	return typ.String
+	return ret
 }
 
 func members(w http.ResponseWriter, r *http.Request) {
 	if(checkUserValid(w,r)){
 		membersData := MembersData{getNextID("user"),nil,getMemberTypes()}
 
-		rows := getResultDB("SELECT * FROM user ORDER BY name ASC")
+		rows := getResultDB("SELECT user.*, userType.typ FROM user LEFT JOIN userType ON user.userType_id = userType.id")
 		ActPan := true
 		for rows.Next(){
 			tmp := MemberData{}
@@ -452,12 +478,12 @@ func members(w http.ResponseWriter, r *http.Request) {
 			var Nic 	sql.NullString
 			var Act 	sql.NullString
 			var Dob 	sql.RawBytes
+			var Typ		sql.NullString
 
-			err := rows.Scan(&Id, &UserType_id, &Status, &Email, &Pass, &Name, &Note, &Tel, &Adrs, &Nic, &Act, &Dob)
+			err := rows.Scan(&Id, &UserType_id, &Status, &Email, &Pass, &Name, &Note, &Tel, &Adrs, &Nic, &Act, &Dob, &Typ)
 			checkErr(err, errDBquery)
 
 			tmp.Id = Id.Int64
-			tmp.Pos = getMemberType(UserType_id.Int64)
 			tmp.Status = Status.String
 			tmp.Email = Email.String
 			tmp.Pass = Pass.String
@@ -472,7 +498,7 @@ func members(w http.ResponseWriter, r *http.Request) {
 				tmp.Act = true
 			}
 			tmp.Dob = convertDateMYSQL2Web(string(Dob))
-
+			tmp.Typ = Typ.String
 			i, _ := strconv.Atoi(strings.Split(tmp.Dob, "/")[2])
 
 			tmp.Age =time.Now().Year() - i
@@ -484,7 +510,7 @@ func members(w http.ResponseWriter, r *http.Request) {
 			}
 			tmp.ActPan = ActPan
 			ActPan = false
-
+			tmp.Dlt = isMemberDeletable(int2Str(tmp.Id))
 			membersData.Members = append(membersData.Members, tmp)
 		}
 		rows.Close()
@@ -497,9 +523,6 @@ func members(w http.ResponseWriter, r *http.Request) {
 func newMember(w http.ResponseWriter, r *http.Request) {
 	if(r.Method == "POST"){
 		r.ParseMultipartForm(32 << 20)
-
-		name := r.FormValue("name")
-		debugMSG(name)
 
 		file, _, err := r.FormFile("uploadfile")
 		if err == nil {
@@ -520,33 +543,176 @@ func updateMember(w http.ResponseWriter, r *http.Request) {
 	if(r.Method == "POST"){
 		r.ParseMultipartForm(32 << 20)
 
-		name := r.FormValue("name")
-		debugMSG(name)
+		if(r.FormValue("action") == "save"){
+			file, _, err := r.FormFile("uploadfile")
+			if err == nil {
+				f, err := os.OpenFile("./helper/users/"+"u"+r.FormValue("id")+".jpg", os.O_WRONLY|os.O_CREATE, 0666)
+				checkErr(err, errFileUpload)
 
-		file, _, err := r.FormFile("uploadfile")
-		if err == nil {
-			f, err := os.OpenFile("./helper/users/"+"u"+r.FormValue("id")+".jpg", os.O_WRONLY|os.O_CREATE, 0666)
-			checkErr(err, errFileUpload)
+				defer f.Close()
+				io.Copy(f, file)
+				defer file.Close()
+			}
+			updateData("user",r.FormValue("id"),"userType_id="+r.FormValue("userType_id")+", status='"+r.FormValue("status")+"', email='"+r.FormValue("email")+"', name='"+r.FormValue("name")+"', note='"+r.FormValue("note")+"', tel='"+r.FormValue("tel")+"', adrs='"+r.FormValue("adrs")+"', nic='"+r.FormValue("nic")+"', act='"+r.FormValue("act")+"', dob='"+convertDateWeb2MySQL(r.FormValue("dob"))+"'")
 
-			defer f.Close()
-			io.Copy(f, file)
-			defer file.Close()
+			if(len(r.FormValue("pass")) != 0){
+				updateData("user",r.FormValue("id"),"pass='"+r.FormValue("pass")+"'")
+			}
+		}else if(r.FormValue("action") == "delete"){
+			deleteData("user",r.FormValue("id"))
+
+			_ = os.Remove("./helper/users/"+"u"+r.FormValue("id")+".jpg")
+
 		}
-		updateData("user",r.FormValue("id"),"userType_id="+r.FormValue("userType_id")+", status='"+r.FormValue("status")+"', email='"+r.FormValue("email")+"', name='"+r.FormValue("name")+"', note='"+r.FormValue("note")+"', tel='"+r.FormValue("tel")+"', adrs='"+r.FormValue("adrs")+"', nic='"+r.FormValue("nic")+"', act='"+r.FormValue("act")+"', dob='"+convertDateWeb2MySQL(r.FormValue("dob"))+"'")
 
-		if(len(r.FormValue("pass")) != 0){
-			updateData("user",r.FormValue("id"),"pass='"+r.FormValue("pass")+"'")
-		}
+
+
 	}
 	http.Redirect(w, r, "members.html", http.StatusSeeOther)
 }
 
-func savingsDiposits(w http.ResponseWriter, r *http.Request) {
+type savingsDeposit struct {
+	Id 	int64
+	Dte	string
+	User_id	int64
+	User	string
+	FEC_id	int64
+	FEC	string
+	Amount	string
+	Interest	string
+	Updated_id	int64
+	Updated	string
+	CurrentInterest	string
+	Total	string
+}
+
+type depositsMember struct {
+	Id	int64
+	Name	string
+}
+
+func getDepositMembers(typ string) []depositsMember {
+	var sqlStr string
+	switch typ {
+	case "ALL":
+		sqlStr="SELECT user.id, user.name FROM user LEFT JOIN userType ON user.userType_id = userType.id"
+		break
+	case "FEC":
+		sqlStr="SELECT user.id, user.name FROM user LEFT JOIN userType ON user.userType_id = userType.id WHERE userType.typ!='Customer'"
+		break
+	}
+	var ret []depositsMember
+	rows := getResultDB(sqlStr)
+
+	for rows.Next(){
+		tmp := depositsMember{}
+
+		var Id 		sql.NullInt64
+		var Name 	sql.NullString
+
+		err := rows.Scan(&Id, &Name)
+		checkErr(err, errDBquery)
+
+		tmp.Id = Id.Int64
+		tmp.Name = Name.String
+
+		ret = append(ret,tmp)
+	}
+	rows.Close()
+	return ret
+
+}
+
+type SavingsDepositsData struct {
+	NextId	int64
+	Today	string
+	Deposits	[]savingsDeposit
+	FECMembers []depositsMember
+	AllMembers	[]depositsMember
+}
+
+func savingsDeposits(w http.ResponseWriter, r *http.Request) {
 	if(checkUserValid(w,r)){
-		showFile(w, r, "savingsDiposits.html", "")
+		savingsDepositsData := SavingsDepositsData{getNextID("deposit"), getTodayToWeb(),nil,getDepositMembers("FEC"),getDepositMembers("ALL")}
+
+		sqlStr := `SELECT tmp1.*, user.name AS updated
+			FROM
+			    (SELECT tmp.* , user.name AS fec
+			    FROM
+				(SELECT deposit.*, user.name AS user FROM deposit
+				LEFT JOIN user
+				ON deposit.user_id=user.id) AS tmp
+			    LEFT JOIN user
+			    ON tmp.fec_id=user.id) as tmp1
+			LEFT JOIN user
+			ON tmp1.updated_id=user.id`
+
+		rows := getResultDB(sqlStr)
+
+		for rows.Next(){
+			tmp := savingsDeposit{}
+
+			var Id 		sql.NullInt64
+			var Dte 	sql.RawBytes
+			var User_id 	sql.NullInt64
+			var Fec_id 	sql.NullInt64
+			var Amount 	sql.NullInt64
+			var Interest 	sql.NullInt64
+			var Updated_id 	sql.NullInt64
+			var User	sql.NullString
+			var Fec		sql.NullString
+			var Updated	sql.NullString
+
+
+			err := rows.Scan(&Id, &Dte, &User_id,&Fec_id, &Amount, &Interest, &Updated_id, &User, &Fec, &Updated)
+			checkErr(err, errDBquery)
+
+			tmp.Id = Id.Int64
+			tmp.Dte = convertDateMYSQL2Web(string(Dte))
+			tmp.User_id=User_id.Int64
+			tmp.FEC_id=Fec_id.Int64
+			tmp.Amount=int2floatStr(Amount.Int64)
+			tmp.Interest=int2floatStr(Interest.Int64)
+			tmp.Updated_id=Updated_id.Int64
+			tmp.User=User.String
+			tmp.FEC=Fec.String
+			tmp.Updated=Updated.String
+
+			//calculation
+			interest := int64(daysUptoNowMysql(string(Dte))) * Amount.Int64 * Interest.Int64 / 3650000
+			println(interest)
+			tmp.CurrentInterest=int2floatStr(interest)
+			tmp.Total=int2floatStr(Amount.Int64 + interest)
+			savingsDepositsData.Deposits = append(savingsDepositsData.Deposits, tmp)
+		}
+		rows.Close()
+
+		showFile(w, r, "savingsDeposits.html", savingsDepositsData)
 	}else {
 		login(w,r)
 	}
+}
+
+func newSavingsDeposit(w http.ResponseWriter, r *http.Request) {
+	if(r.Method == "POST"){
+		r.ParseMultipartForm(32 << 20)
+		insertData("deposit",r.FormValue("id") + ", '"+convertDateWeb2MySQL(r.FormValue("dte"))+"' , "+r.FormValue("user_id")+", "+r.FormValue("fec_id")+", "+strfloat2strint(r.FormValue("amount"))+", "+strfloat2strint(r.FormValue("interest"))+", "+r.FormValue("updated_id"))
+	}
+	http.Redirect(w, r, "savingsDeposits.html", http.StatusSeeOther)
+}
+
+func updateSavingsDeposit(w http.ResponseWriter, r *http.Request) {
+	if(r.Method == "POST"){
+		r.ParseMultipartForm(32 << 20)
+
+		if(r.FormValue("action") == "save"){
+			updateData("deposit",r.FormValue("id"),"dte='"+convertDateWeb2MySQL(r.FormValue("dte"))+"', user_id="+r.FormValue("user_id")+", fec_id="+r.FormValue("fec_id")+", amount="+strfloat2strint(r.FormValue("amount"))+", interest="+strfloat2strint(r.FormValue("interest"))+", updated_id="+r.FormValue("updated_id"))
+		}else if(r.FormValue("action") == "delete"){
+			deleteData("deposit",r.FormValue("id"))
+		}
+
+	}
+	http.Redirect(w, r, "savingsDeposits.html", http.StatusSeeOther)
 }
 
 func banks(w http.ResponseWriter, r *http.Request) {
@@ -557,7 +723,6 @@ func banks(w http.ResponseWriter, r *http.Request) {
 		login(w,r)
 	}
 }
-
 
 func login(w http.ResponseWriter, r *http.Request) {
 	if(checkUserValid(w,r)){
@@ -588,7 +753,6 @@ func mainSearch(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	//initDatabase()
-
 	http.HandleFunc("/test.html", test)
 	http.HandleFunc("/login.html", login)
 	http.HandleFunc("/logout.html", logout)
@@ -602,7 +766,9 @@ func main() {
 	http.HandleFunc("/newMember.html", newMember)
 	http.HandleFunc("/updateMember.html", updateMember)
 
-	http.HandleFunc("/savingsDiposits.html", savingsDiposits)
+	http.HandleFunc("/savingsDeposits.html", savingsDeposits)
+	http.HandleFunc("/newSavingsDeposit.html", newSavingsDeposit)
+	http.HandleFunc("/updateSavingsDeposit.html", updateSavingsDeposit)
 
 	http.HandleFunc("/banks.html", banks)
 
