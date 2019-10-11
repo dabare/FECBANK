@@ -1,0 +1,100 @@
+<nav class="pcoded-navbar">
+  <div class="sidebar_toggle"><a href="#"><i class="icon-close icons"></i></a></div>
+  <div class="pcoded-inner-navbar main-menu">
+
+     <div class="pcoded-navigation-label"></div>
+
+    <ul class="pcoded-item pcoded-left-item">
+      <li *ngIf="getUserTypeId() == 13 || getUserTypeId() == 3" class="" id="dashboard" (click)="clickLink('#dashboard')" title="Dashboard">
+        <a [routerLink]="['./dashboard']">
+          <span class="pcoded-micon"><i class="ti-home"></i><b>D</b></span>
+          <span class="pcoded-mtext">Home</span>
+          <span class="pcoded-mcaret"></span>
+        </a>
+      </li>
+
+      <li *ngIf="getUserTypeId() == 13 || getUserTypeId() == 3 || getUserTypeId() == 1" id="member" (click)="clickLink('#member')" title="Member Management">
+        <a [routerLink]="['./customer']">
+          <span class="pcoded-micon"><i class="fa fa-users"></i><b>A</b></span>
+          <span class="pcoded-mtext">Members</span>
+          <span class="pcoded-mcaret"></span>
+        </a>
+      </li>
+
+      <div class="pcoded-navigation-label"></div>
+
+      <li *ngIf="getUserTypeId() == 13 || getUserTypeId() == 3 || getUserTypeId() == 2" class="pcoded-hasmenu">
+        <a href="javascript:void(0)">
+          <span class="pcoded-micon"><i class="fa fa-download"></i><b>D</b></span>
+          <span class="pcoded-mtext">Savings</span>
+          <!-- <span class="pcoded-badge label label-danger">**</span> -->
+          <span class="pcoded-mcaret"></span>
+        </a>
+        <ul class="pcoded-submenu">
+          <li *ngIf="getUserTypeId() == 13 || getUserTypeId() == 3" id="savings" (click)="clickLink('#savings')" title="Saving Ledger">
+            <a [routerLink]="['./savings']">
+              <span class="pcoded-micon"><i class="ti-list"></i><b>D</b></span>
+              <span class="pcoded-mtext">Saving Ledger</span>
+              <span class="pcoded-mcaret"></span>
+            </a>
+          </li>
+          <li *ngIf="getUserTypeId() == 13 || getUserTypeId() == 3 || getUserTypeId() == 2" id="saving-rate" (click)="clickLink('#saving-rate')" title="Savings Rate History">
+            <a [routerLink]="['./saving-rate']">
+              <span class="pcoded-micon"><i class="ti-list"></i><b>D</b></span>
+              <span class="pcoded-mtext">Savings Rate History</span>
+              <span class="pcoded-mcaret"></span>
+            </a>
+          </li>
+        </ul>
+      </li>
+
+      <li *ngIf="getUserTypeId() == 13 || getUserTypeId() == 3 || getUserTypeId() == 2" class="pcoded-hasmenu">
+        <a href="javascript:void(0)">
+          <span class="pcoded-micon"><i class="fa fa-upload"></i><b>D</b></span>
+          <span class="pcoded-mtext">Loans</span>
+          <span class="pcoded-mcaret"></span>
+        </a>
+        <ul *ngIf="getUserTypeId() == 13 || getUserTypeId() == 3 || getUserTypeId() == 2" class="pcoded-submenu">
+          <li id="loans" (click)="clickLink('#loans')" title="Loan List">
+            <a [routerLink]="['./loans']">
+              <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
+              <span class="pcoded-mtext">Loan List</span>
+              <span class="pcoded-mcaret"></span>
+            </a>
+          </li>
+          <li *ngIf="getUserTypeId() == 13 || getUserTypeId() == 3 || getUserTypeId() == 2" id="loan-deposits" (click)="clickLink('#loan-deposits')" title="Loan Deposits">
+            <a [routerLink]="['./loan-deposits']">
+              <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
+              <span class="pcoded-mtext">Loan Deposits</span>
+              <span class="pcoded-mcaret"></span>
+            </a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <div class="pcoded-navigation-label">Settings</div>
+    <ul class="pcoded-item pcoded-left-item">
+<!--      <li *ngIf="getUserTypeId() == 13 || getUserTypeId() == 3" id="users" (click)="clickLink('#users')" title="System User Management">-->
+<!--        <a [routerLink]="['./users']">-->
+<!--          <span class="pcoded-micon"><i class="fa fa-users-cog"></i><b>D</b></span>-->
+<!--          <span class="pcoded-mtext">User Management</span>-->
+<!--          <span class="pcoded-mcaret"></span>-->
+<!--        </a>-->
+<!--      </li>-->
+      <li id="user" (click)="clickLink('#user')" title="System User Settings">
+        <a [routerLink]="['./user']">
+          <span class="pcoded-micon"><i class="fa fa-user-cog"></i><b>D</b></span>
+          <span class="pcoded-mtext">User Settings</span>
+          <span class="pcoded-mcaret"></span>
+        </a>
+      </li>
+      <li *ngIf="getUserTypeId() == 13" id="settings" (click)="clickLink('#settings')" title="System Settings">
+        <a [routerLink]="['./system-settings']">
+          <span class="pcoded-micon"><i class="ti-settings"></i><b>D</b></span>
+          <span class="pcoded-mtext">System Settings</span>
+          <span class="pcoded-mcaret"></span>
+        </a>
+      </li>
+    </ul>
+  </div>
+</nav>
