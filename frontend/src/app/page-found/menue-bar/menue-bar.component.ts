@@ -39,7 +39,7 @@ export class MenueBarComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.user = this.loginService.getUser().name;
-    this.getAllProducts();
+    // this.getAllProducts();
   }
 
   logOut() {

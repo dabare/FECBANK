@@ -142,58 +142,19 @@ export class FinanceService {
     return Math.ceil(principalAmount * annualRate * a / (1200 * (a - 1)));
   }
 
-  public processLoanHistory(data: any[], initDate, amount, durationMonths, rate, penalty) {
-    const interest = (amount * rate * durationMonths) / 1200;
-    const total = amount + interest;
-    const rental = total / durationMonths;
-    data = this.preProcessLoanData(data, initDate, total);
-    return data;
+  public processLoanHistory(data: any[], initDate, amount, durationMonths, rate, rental, total, penalty) {
+    return this.mapLoanPaymentWithDays(data, this.getLoanSettlementDates(initDate, durationMonths, total, rental));
   }
 
-  private preProcessLoanData(data: any[], initDate, total) {
-    for (let i = 0; i < data.length; i++) {
-      data[i].credit = data[i].amount;
-      data[i].debit = 0;
-      data[i].description = data[i].note;
-      if (data[i].status !== '1') {
-        data[i].credit = 0;
-        data[i].description = 'CANCELLED :' + data[i].description;
-      }
-      data[i].trx_type = 'DEPOSIT';
-    }
-    data.unshift({
-      req_date: initDate,
-      description: 'Request total',
-      credit: 0,
-      debit: total,
-      trx_type: 'INIT'
-    });
-    const d = new Date();
-    let dd = d.getFullYear() + '-' + (d.getMonth() + 1) ;
-    if ( d.getDate() < 10) {
-      dd += '-0' + d.getDate();
-    } else {
-      dd += '-' + d.getDate();
-    }
-    data.push({
-        req_date: dd,
-        description: 'Due amount',
-        credit: 0,
-        debit: 0,
-        trx_type: 'TODAY'
-      });
-    return data;
-  }
-
-  private getLoanSettlementDates(initDate, durationMonths) {
-    let days = [];
-    let paymentInitDate = 5; // pays 5th 15th or 25th
+  private getLoanSettlementDates(initDate, durationMonths, total, rental) {
+    const days = [];
+    let paymentInitDate = '05'; // pays 5th 15th or 25th
     let paymentInitMonth = Number(initDate.split('-')[1]) - 1;
     let paymentInitYear = Number(initDate.split('-')[0]);
     if (Number(initDate.split('-')[2]) > 5 && Number(initDate.split('-')[2]) <= 15 ) {
-      paymentInitDate = 15;
+      paymentInitDate = '15';
     } else if (Number(initDate.split('-')[2]) > 15 && Number(initDate.split('-')[2]) <= 25 ) {
-      paymentInitDate = 25;
+      paymentInitDate = '25';
     } else if (Number(initDate.split('-')[2]) > 25) {
       paymentInitMonth++;
       paymentInitMonth = paymentInitMonth % 12;
@@ -202,8 +163,67 @@ export class FinanceService {
       }
     }
 
-    for (let i = 0; i < durationMonths; i++) {
+    days.push({
+      id: '-1',
+      req_date: paymentInitYear + '-' + (paymentInitMonth < 9 ? '0' : '' ) + (paymentInitMonth + 1) + '-' + paymentInitDate,
+      description: 'Agreement',
+      credit: 0,
+      debit: total,
+      trx_type: 'INIT'
+    });
 
+    for (let i = 0; i < durationMonths; i++) {
+      paymentInitMonth++;
+      paymentInitMonth = paymentInitMonth % 12;
+      if (paymentInitMonth === 0) {// if january, means last was december, so new year
+        paymentInitYear++;
+      }
+      days.push({
+        id: '-1',
+        req_date: paymentInitYear + '-' + (paymentInitMonth < 9 ? '0' : '' ) + (paymentInitMonth + 1) + '-' + paymentInitDate,
+        description: 'Due amount: Rs. ' + this.toLocale(this.cents2rupees(rental)) + '/=',
+        credit: 0,
+        debit: 0,
+        trx_type: 'DUEDATE'
+      });
     }
+    return days;
+  }
+
+  private mapLoanPaymentWithDays(payments: any[], days: any[]) {
+    let credit = Number(days[0].credit);
+    let debit = Number(days[0].debit);
+    for (let i = 0; i < payments.length; i++) {
+      days[i + 1].credit = payments[i].amount;
+      days[i + 1].description = 'Payed on ' + payments[i].req_date + ' ' + this.getDepositCode(payments[i].id);
+      credit += Number(days[i + 1].credit);
+      debit += Number(days[i + 1].debit);
+      days[i + 1].id = payments[i].id;
+    }
+    days.push({
+      id: '-1',
+      req_date: '',
+      description: 'Total',
+      credit: credit + '',
+      debit: debit + '',
+      trx_type: 'TOT'
+    });
+    const diff = debit - credit;
+    debit = 0;
+    credit = 0;
+    if (diff > 0) {
+      credit = diff;
+    } else {
+      debit = -1 * diff;
+    }
+    days.push({
+      id: '-1',
+      req_date: '',
+      description: 'Difference',
+      credit: credit + '',
+      debit: debit + '',
+      trx_type: 'TOT'
+    });
+    return days;
   }
 }

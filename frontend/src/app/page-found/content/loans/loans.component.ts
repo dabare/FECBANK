@@ -193,7 +193,10 @@ export class LoansComponent implements OnInit, AfterViewInit {
       this.deposits = this.financeService.processLoanHistory(data, this.loan.req_date,
         Number(this.loan.amount) * 100,
         Number(this.loan.duration_months),
-        Number(this.loan.rate), 0);
+        Number(this.loan.rate),
+        Number(this.loan.rental) * 100,
+        Number(this.loan.total) * 100,
+        0);
       console.log(this.deposits);
       }, (err) => {
         this.notifi.error('While fetching data');

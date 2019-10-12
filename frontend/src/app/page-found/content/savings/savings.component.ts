@@ -325,10 +325,10 @@ export class SavingsComponent implements OnInit, AfterViewInit {
           }],
         order: [[0, 'asc']],
         footerCallback: (row, data, start, end, display) => {
-          this.totalCurrentDeposit = this.getSum(data, 9, display.slice(start, end));
-          this.totalCurrentWithdrawal = this.getSum(data, 8, display.slice(start, end));
-          this.totalAllDeposit = this.getSum(data, 9, display);
-          this.totalAllWithdrawal = this.getSum(data, 8, display);
+          this.totalCurrentDeposit = this.getSum(data, 8, display.slice(start, end));
+          this.totalCurrentWithdrawal = this.getSum(data, 9, display.slice(start, end));
+          this.totalAllDeposit = this.getSum(data, 8, display);
+          this.totalAllWithdrawal = this.getSum(data, 9, display);
         }
       });
     }
@@ -415,7 +415,7 @@ export class SavingsComponent implements OnInit, AfterViewInit {
 
       this.savingsDataTable.row.add([saving.index, code, memberID, saving.req_date,
         this.financeService.cents2rupees(saving.amount), saving.note, status,
-        saving.updated_by, withdrawal, deposit, action]);
+        saving.updated_by, deposit, withdrawal, action]);
 
     }
     this.savingsDataTable.draw();

@@ -48,6 +48,6 @@ SET  member_loan_plan_id=:member_loan_plan_id, req_date=:req_date, rate=:rate, a
 func viewDepositsOfLoan(w http.ResponseWriter, r *http.Request) {
 	query(w, r, `SELECT m.*, date_format(m.req_date,'%Y-%m-%d') AS req_date
 						FROM `+userDbReplaceStr+`.member_loan_deposit AS m 
-						WHERE m.member_loan_id=(:id) AND m.status <> 0
+						WHERE m.member_loan_id=(:id) AND m.status = 1
 						ORDER BY m.req_date ASC`)
 }
