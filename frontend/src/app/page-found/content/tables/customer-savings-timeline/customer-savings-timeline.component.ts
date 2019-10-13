@@ -84,6 +84,7 @@ export class CustomerSavingsTimelineComponent implements OnChanges {
     const today = new Date();
 
     this.saving.id = -1;
+    this.saving.member_id = this.customer.id;
     this.saving.amount = '0.0';
     this.saving.status = '1';
     this.saving.note = '-';

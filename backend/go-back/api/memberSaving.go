@@ -16,8 +16,10 @@ func initMemberSaving(router *mux.Router) {
 }
 
 func viewAllMemberSavings(w http.ResponseWriter, r *http.Request) {
-	query(w, r, `SELECT m.*, date_format(m.req_date,'%Y-%m-%d') AS req_date, u.name AS updated_by
-						FROM `+userDbReplaceStr+`.member_saving_ledger AS m LEFT JOIN `+userDB+`.user AS u ON m.req_user=u.id 
+	query(w, r, `SELECT m.*, date_format(m.req_date,'%Y-%m-%d') AS req_date, u.name AS updated_by, mm.name AS member_name
+						FROM `+userDbReplaceStr+`.member_saving_ledger AS m
+						LEFT JOIN `+userDB+`.user AS u ON m.req_user=u.id 
+						LEFT JOIN `+userDbReplaceStr+`.member AS mm ON m.member_id=mm.id 
 						WHERE m.status <> 0
 						ORDER BY m.req_date DESC`)
 }
@@ -29,7 +31,7 @@ func insertMemberSaving(w http.ResponseWriter, r *http.Request) {
 }
 
 func cancelMemberSaving(w http.ResponseWriter, r *http.Request) {
-	execute(w, r, `UPDATE `+userDbReplaceStr+`.member_saving SET status=4 where id=(:id)`)
+	execute(w, r, `UPDATE `+userDbReplaceStr+`.member_saving SET status=4, req_user=:req_user where id=(:id)`)
 }
 
 func updateMemberSaving(w http.ResponseWriter, r *http.Request) {
@@ -45,7 +47,7 @@ func insertMemberWithdraw(w http.ResponseWriter, r *http.Request) {
 }
 
 func cancelMemberWithdraw(w http.ResponseWriter, r *http.Request) {
-	execute(w, r, `UPDATE `+userDbReplaceStr+`.member_withdraw SET status=4 where id=(:id)`)
+	execute(w, r, `UPDATE `+userDbReplaceStr+`.member_withdraw SET status=4, req_user=:req_user where id=(:id)`)
 }
 
 func updateMemberWithdraw(w http.ResponseWriter, r *http.Request) {

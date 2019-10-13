@@ -13,6 +13,7 @@ func initMemberLoan(router *mux.Router) {
 	router.HandleFunc("/api/updateMemberLoan", updateMemberLoan).Methods("POST", "OPTIONS")
 	router.HandleFunc("/api/viewDepositsOfLoan", viewDepositsOfLoan).Methods("POST", "OPTIONS")
 	router.HandleFunc("/api/completeMemberLoanDeposit", completeMemberLoanDeposit).Methods("POST", "OPTIONS")
+	router.HandleFunc("/api/viewAllMemberLoansGivenMemberId", viewAllMemberLoansGivenMemberId).Methods("POST", "OPTIONS")
 }
 
 func viewAllMemberLoans(w http.ResponseWriter, r *http.Request) {
@@ -21,6 +22,15 @@ func viewAllMemberLoans(w http.ResponseWriter, r *http.Request) {
 						LEFT JOIN `+userDB+`.user AS u ON m.req_user=u.id 
 						LEFT JOIN `+userDbReplaceStr+`.member AS mm ON m.member_id=mm.id 
 						WHERE m.status <> 0 AND mm.status <> 0
+						ORDER BY m.id DESC`)
+}
+
+func viewAllMemberLoansGivenMemberId(w http.ResponseWriter, r *http.Request) {
+	query(w, r, `SELECT m.*, date_format(m.req_date,'%Y-%m-%d') AS req_date, u.name AS updated_by, mm.name AS member_name
+						FROM `+userDbReplaceStr+`.member_loan AS m 
+						LEFT JOIN `+userDB+`.user AS u ON m.req_user=u.id 
+						LEFT JOIN `+userDbReplaceStr+`.member AS mm ON m.member_id=mm.id 
+						WHERE m.status <> 0 AND mm.status <> 0 AND mmm.status <> 0 AND m.member_id=(:id)
 						ORDER BY m.id DESC`)
 }
 

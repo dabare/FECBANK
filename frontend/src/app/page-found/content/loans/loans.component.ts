@@ -321,7 +321,7 @@ export class LoansComponent implements OnInit, AfterViewInit {
           {
             searchable: false,
             sortable: false,
-            targets: [0, 8]
+            targets: [0, 11]
           },
           {
             visible: false,
@@ -329,7 +329,11 @@ export class LoansComponent implements OnInit, AfterViewInit {
           },
           {
             className: 'text-right',
-            targets: [4, 5, 6]
+            targets: [5, 7]
+          },
+          {
+            className: 'text-center',
+            targets: [1, 2, 3, 4, 6, 9, 10, 11]
           }],
         order: [[0, 'asc']],
       });
@@ -390,15 +394,22 @@ export class LoansComponent implements OnInit, AfterViewInit {
 // Draw once all updates are done
 //     this.dataTable.rows().clear().draw();
     for (const loan of this.loans) {
-      const action =
+      let action =
         '<button class="btn btn-mini btn-info infoLoan" > <i class="icofont icofont-info" aria-hidden="true"></i></button> ' +
         '<button class="btn btn-mini btn-warning editLoan" > <i class="icofont icofont-edit-alt" aria-hidden="true"></i></button> ' +
         '<button class="btn btn-mini btn-danger deleteLoan"> <i class="icofont icofont-ui-delete" aria-hidden="true"></i></button>';
 
+      if (loan.status !== '1') {
+        action =
+          '<button class="btn btn-mini btn-info infoLoan" > <i class="icofont icofont-info" aria-hidden="true"></i></button> ' +
+          '<button class="btn btn-mini btn-warning" disabled> <i class="icofont icofont-edit-alt" aria-hidden="true"></i></button> ' +
+          '<button class="btn btn-mini btn-danger deleteLoan"> <i class="icofont icofont-ui-delete" aria-hidden="true"></i></button>';
+      }
+
       const memberID =
-        `<button class="btn btn-mini btn-info gotoCustomer">` + loan.member_name + `</button>`;
+        `<button class="astext gotoCustomer">` + loan.member_name + `</button>`;
       const loanID =
-        `<button class="btn btn-mini btn-info gotoLoanDeposits">` + this.financeService.getLoanCode(loan.id) + `</button>`;
+        `<button class="astext gotoLoanDeposits">` + this.financeService.getLoanCode(loan.id) + `</button>`;
 
 
       this.loansDataTable.row.add([loan.index, loanID,

@@ -316,9 +316,9 @@ export class LoanDepositsComponent implements OnInit, AfterViewInit {
         '<button class="btn btn-mini btn-danger deleteLoanDeposit"> <i class="icofont icofont-ui-delete" aria-hidden="true"></i></button>';
 
       const memberID =
-        `<button class="btn btn-mini btn-info gotoCustomer">` + this.financeService.getCustomerCode(deposit.member_id) + `</button>`;
+        `<button class="astext gotoCustomer">` + deposit.member_name + `</button>`;
       const loanID =
-        `<button class="btn btn-mini btn-info gotoLoan">` + this.financeService.getLoanCode(deposit.member_loan_id) + `</button>`;
+        `<button class="astext gotoLoan">` + this.financeService.getLoanCode(deposit.member_loan_id) + `</button>`;
 
 
       if (deposit.status === '4') {

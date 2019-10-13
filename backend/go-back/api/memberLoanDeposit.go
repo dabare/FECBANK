@@ -13,9 +13,10 @@ func initMemberLoanDeposit(router *mux.Router) {
 }
 
 func viewAllMemberLoanDeposits(w http.ResponseWriter, r *http.Request) {
-	query(w, r, `SELECT m.*, date_format(m.req_date,'%Y-%m-%d') AS req_date, u.name AS updated_by, mm.member_id AS member_id
+	query(w, r, `SELECT m.*, date_format(m.req_date,'%Y-%m-%d') AS req_date, u.name AS updated_by, mm.member_id AS member_id, mmm.name AS member_name
 						FROM `+userDbReplaceStr+`.member_loan_deposit AS m LEFT JOIN `+userDB+`.user AS u ON m.req_user=u.id 
 						LEFT JOIN `+userDbReplaceStr+`.member_loan AS mm ON m.member_loan_id=mm.id
+						LEFT JOIN `+userDbReplaceStr+`.member AS mmm ON mm.member_id=mmm.id 
 						WHERE m.status <> 0
 						ORDER BY m.id DESC`)
 }
@@ -27,7 +28,7 @@ func insertMemberLoanDeposit(w http.ResponseWriter, r *http.Request) {
 }
 
 func cancelMemberLoanDeposit(w http.ResponseWriter, r *http.Request) {
-	execute(w, r, `UPDATE `+userDbReplaceStr+`.member_loan_deposit SET status=4 where id=(:id)`)
+	execute(w, r, `UPDATE `+userDbReplaceStr+`.member_loan_deposit SET status=4, req_user=:req_user where id=(:id)`)
 }
 
 func updateMemberLoanDeposit(w http.ResponseWriter, r *http.Request) {

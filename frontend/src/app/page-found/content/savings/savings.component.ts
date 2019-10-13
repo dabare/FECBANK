@@ -410,7 +410,7 @@ export class SavingsComponent implements OnInit, AfterViewInit {
       }
 
       const memberID =
-        `<button class="btn btn-mini btn-info gotoCustomer">` + this.financeService.getCustomerCode(saving.member_id) + `</button>`;
+        `<button class="astext gotoCustomer">` + saving.member_name + `</button>`;
 
 
       this.savingsDataTable.row.add([saving.index, code, memberID, saving.req_date,

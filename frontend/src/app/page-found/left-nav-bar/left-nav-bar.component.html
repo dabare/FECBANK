@@ -23,7 +23,7 @@
 
       <div class="pcoded-navigation-label"></div>
 
-      <li *ngIf="getUserTypeId() == 13 || getUserTypeId() == 3 || getUserTypeId() == 2" class="pcoded-hasmenu">
+      <li *ngIf="getUserTypeId() == 13 || getUserTypeId() == 3 || getUserTypeId() == 2" class="pcoded-hasmenu pcoded-trigger">
         <a href="javascript:void(0)">
           <span class="pcoded-micon"><i class="fa fa-download"></i><b>D</b></span>
           <span class="pcoded-mtext">Savings</span>
@@ -48,7 +48,7 @@
         </ul>
       </li>
 
-      <li *ngIf="getUserTypeId() == 13 || getUserTypeId() == 3 || getUserTypeId() == 2" class="pcoded-hasmenu">
+      <li *ngIf="getUserTypeId() == 13 || getUserTypeId() == 3 || getUserTypeId() == 2" class="pcoded-hasmenu pcoded-trigger">
         <a href="javascript:void(0)">
           <span class="pcoded-micon"><i class="fa fa-upload"></i><b>D</b></span>
           <span class="pcoded-mtext">Loans</span>
@@ -88,13 +88,13 @@
           <span class="pcoded-mcaret"></span>
         </a>
       </li>
-      <li *ngIf="getUserTypeId() == 13" id="settings" (click)="clickLink('#settings')" title="System Settings">
-        <a [routerLink]="['./system-settings']">
-          <span class="pcoded-micon"><i class="ti-settings"></i><b>D</b></span>
-          <span class="pcoded-mtext">System Settings</span>
-          <span class="pcoded-mcaret"></span>
-        </a>
-      </li>
+<!--      <li *ngIf="getUserTypeId() == 13" id="settings" (click)="clickLink('#settings')" title="System Settings">-->
+<!--        <a [routerLink]="['./system-settings']">-->
+<!--          <span class="pcoded-micon"><i class="ti-settings"></i><b>D</b></span>-->
+<!--          <span class="pcoded-mtext">System Settings</span>-->
+<!--          <span class="pcoded-mcaret"></span>-->
+<!--        </a>-->
+<!--      </li>-->
     </ul>
   </div>
 </nav>
