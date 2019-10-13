@@ -190,7 +190,8 @@ export class CustomerLoanTimelineComponent implements OnChanges {
       this.customerLoanTimelineDatatable = $('#customerLoanTimelineDatatable').DataTable({
         scrollX: false,
         scrollCollapse: true,
-        paging: true,
+        scrollY:        '200px',
+        paging: false,
         pageLength: this.customerLoanTimelineDatatableLength,
         responsive: false,
         sDom: 'Btr',

@@ -234,7 +234,8 @@ export class CustomerSavingsTimelineComponent implements OnChanges {
       this.customerSavingsTimelineDatatable = $('#customerSavingsTimelineDatatable').DataTable({
         scrollX: false,
         scrollCollapse: true,
-        paging: true,
+        scrollY:        '200px',
+        paging: false,
         pageLength: this.customerSavingsTimelineDatatableLength,
         responsive: false,
         sDom: 'Btr',
