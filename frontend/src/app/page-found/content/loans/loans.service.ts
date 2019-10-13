@@ -27,6 +27,7 @@ export class LoansService {
   }
 
   deleteMemberLoan(data: any) {
+    data.req_user = this.loginService.getUser().id;
     return this.httpClient.post(environment.apiUrl + '/deleteMemberLoan', data);
   }
 

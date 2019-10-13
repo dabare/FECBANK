@@ -30,8 +30,10 @@ import {ErrorInterceptor} from './error.interceptor';
 import {ResponseInterceptor} from './response.interceptor';
 import {LoansComponent} from './page-found/content/loans/loans.component';
 import {LoanDepositsComponent} from './page-found/content/loan-deposits/loan-deposits.component';
-import {SavingRateComponent} from "./page-found/content/saving-rate/saving-rate.component";
-import {SavingsComponent} from "./page-found/content/savings/savings.component";
+import {SavingRateComponent} from './page-found/content/saving-rate/saving-rate.component';
+import {SavingsComponent} from './page-found/content/savings/savings.component';
+import {CustomerSavingsTimelineComponent} from './page-found/content/tables/customer-savings-timeline/customer-savings-timeline.component';
+import {CustomerLoanTimelineComponent} from "./page-found/content/tables/customer-loan-timeline/customer-loan-timeline.component";
 
 @NgModule({
   declarations: [
@@ -54,7 +56,9 @@ import {SavingsComponent} from "./page-found/content/savings/savings.component";
     LoansComponent,
     LoanDepositsComponent,
     SavingRateComponent,
-    SavingsComponent
+    SavingsComponent,
+    CustomerSavingsTimelineComponent,
+    CustomerLoanTimelineComponent
   ],
   imports: [
     BrowserModule,
@@ -81,6 +85,8 @@ import {SavingsComponent} from "./page-found/content/savings/savings.component";
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
   ],
   bootstrap: [AppComponent],
-  exports: [AppComponent],
+  exports: [
+    AppComponent,
+  ],
 })
 export class AppModule { }

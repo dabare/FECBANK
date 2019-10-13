@@ -12,12 +12,15 @@ func initMemberLoan(router *mux.Router) {
 	router.HandleFunc("/api/deleteMemberLoan", deleteMemberLoan).Methods("POST", "OPTIONS")
 	router.HandleFunc("/api/updateMemberLoan", updateMemberLoan).Methods("POST", "OPTIONS")
 	router.HandleFunc("/api/viewDepositsOfLoan", viewDepositsOfLoan).Methods("POST", "OPTIONS")
+	router.HandleFunc("/api/completeMemberLoanDeposit", completeMemberLoanDeposit).Methods("POST", "OPTIONS")
 }
 
 func viewAllMemberLoans(w http.ResponseWriter, r *http.Request) {
-	query(w, r, `SELECT m.*, date_format(m.req_date,'%Y-%m-%d') AS req_date, u.name AS updated_by 
-						FROM `+userDbReplaceStr+`.member_loan AS m LEFT JOIN `+userDB+`.user AS u ON m.req_user=u.id 
-						WHERE m.status <> 0
+	query(w, r, `SELECT m.*, date_format(m.req_date,'%Y-%m-%d') AS req_date, u.name AS updated_by, mm.name AS member_name
+						FROM `+userDbReplaceStr+`.member_loan AS m 
+						LEFT JOIN `+userDB+`.user AS u ON m.req_user=u.id 
+						LEFT JOIN `+userDbReplaceStr+`.member AS mm ON m.member_id=mm.id 
+						WHERE m.status <> 0 AND mm.status <> 0
 						ORDER BY m.id DESC`)
 }
 
@@ -36,7 +39,11 @@ func insertMemberLoan(w http.ResponseWriter, r *http.Request) {
 }
 
 func deleteMemberLoan(w http.ResponseWriter, r *http.Request) {
-	execute(w, r, `UPDATE `+userDbReplaceStr+`.member_loan SET status=0 where id=(:id)`)
+	execute(w, r, `UPDATE `+userDbReplaceStr+`.member_loan SET status=0, req_user=:req_user where id=(:id)`)
+}
+
+func completeMemberLoanDeposit(w http.ResponseWriter, r *http.Request) {
+	execute(w, r, `UPDATE `+userDbReplaceStr+`.member_loan SET status=2, req_user=:req_user where id=(:id)`)
 }
 
 func updateMemberLoan(w http.ResponseWriter, r *http.Request) {

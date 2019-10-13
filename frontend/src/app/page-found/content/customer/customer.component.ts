@@ -9,7 +9,7 @@ declare var $: any;
 declare var jQuery: any;
 
 @Component({
-  selector: 'app-tables',
+  selector: 'app-customer',
   templateUrl: './customer.component.html',
   styleUrls: ['./customer.component.scss']
 })
@@ -219,6 +219,7 @@ export class CustomerComponent implements OnInit, AfterViewInit {
 
   refreshCustomers() {
     this.customerDataTableSearch = '';
+    this.actionMode = '';
     this.getAllCustomers();
     this.searchData();
   }

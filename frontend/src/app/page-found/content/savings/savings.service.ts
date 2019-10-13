@@ -27,6 +27,7 @@ export class SavingsService {
   }
 
   updateMemberSaving(data: any) {
+    data.req_user = this.loginService.getUser().id;
     return this.httpClient.post(environment.apiUrl + '/updateMemberSaving', data);
   }
 
@@ -41,6 +42,7 @@ export class SavingsService {
   }
 
   updateMemberWithdraw(data: any) {
+    data.req_user = this.loginService.getUser().id;
     return this.httpClient.post(environment.apiUrl + '/updateMemberWithdraw', data);
   }
 

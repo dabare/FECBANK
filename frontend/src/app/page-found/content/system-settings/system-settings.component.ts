@@ -5,7 +5,7 @@ import {NotificationsService} from '../../../utils/notifications';
 import {SystemSettingsService} from './system-settings.service';
 
 @Component({
-  selector: 'app-tables',
+  selector: 'app-system-settings',
   templateUrl: './system-settings.component.html',
   styleUrls: ['./system-settings.component.scss']
 })

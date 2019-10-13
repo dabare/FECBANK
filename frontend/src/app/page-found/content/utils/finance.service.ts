@@ -14,6 +14,7 @@ export class FinanceService {
     for (let index = 0; index < array.length; index++) {
       array[index].index = index;
     }
+    return array;
   }
 
   public getCustomerCode(id) {
@@ -143,7 +144,7 @@ export class FinanceService {
   }
 
   public processLoanHistory(data: any[], initDate, amount, durationMonths, rate, rental, total, penalty) {
-    return this.mapLoanPaymentWithDays(data, this.getLoanSettlementDates(initDate, durationMonths, total, rental));
+    return this.addIndex(this.mapLoanPaymentWithDays(data, this.getLoanSettlementDates(initDate, durationMonths, total, rental)));
   }
 
   private getLoanSettlementDates(initDate, durationMonths, total, rental) {
@@ -199,6 +200,7 @@ export class FinanceService {
       credit += Number(days[i + 1].credit);
       debit += Number(days[i + 1].debit);
       days[i + 1].id = payments[i].id;
+      days[i + 1].trx_type = 'DEPOSIT';
     }
     days.push({
       id: '-1',

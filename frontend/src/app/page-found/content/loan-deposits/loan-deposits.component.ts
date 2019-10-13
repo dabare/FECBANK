@@ -10,7 +10,7 @@ declare var $: any;
 declare var jQuery: any;
 
 @Component({
-  selector: 'app-tables',
+  selector: 'app-loan-deposits',
   templateUrl: './loan-deposits.component.html',
   styleUrls: ['./loan-deposits.component.scss']
 })

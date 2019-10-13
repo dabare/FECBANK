@@ -5,7 +5,7 @@ import {UserService} from './user.service';
 import {NotificationsService} from '../../../utils/notifications';
 
 @Component({
-  selector: 'app-tables',
+  selector: 'app-user',
   templateUrl: './user.component.html',
   styleUrls: ['./user.component.scss']
 })

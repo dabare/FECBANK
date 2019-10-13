@@ -10,7 +10,7 @@ declare var $: any;
 declare var jQuery: any;
 
 @Component({
-  selector: 'app-tables',
+  selector: 'app-loans',
   templateUrl: './loans.component.html',
   styleUrls: ['./loans.component.scss']
 })
@@ -50,7 +50,8 @@ export class LoansComponent implements OnInit, AfterViewInit {
     updated_by: '',
     rental: '',
     interest: '',
-    total: ''
+    total: '',
+    member_name: '',
   };
 
   customers: any[] = [];
@@ -131,6 +132,7 @@ export class LoansComponent implements OnInit, AfterViewInit {
     const interest = total - Number(this.loans[i].amount);
     this.loan.interest = this.financeService.cents2rupees(interest);
     this.loan.total = this.financeService.cents2rupees(total);
+    this.loan.member_name = this.loans[i].member_name;
   }
 
   clickEditLoan(i) {
@@ -188,20 +190,20 @@ export class LoansComponent implements OnInit, AfterViewInit {
     this.actionMode = 'info';
     this.clearLoan();
     this.loadLoan(i);
-    this.deposits = [];
-    this.loansService.getDepositsOfLoan(this.loan).subscribe((data: any) => {
-      this.deposits = this.financeService.processLoanHistory(data, this.loan.req_date,
-        Number(this.loan.amount) * 100,
-        Number(this.loan.duration_months),
-        Number(this.loan.rate),
-        Number(this.loan.rental) * 100,
-        Number(this.loan.total) * 100,
-        0);
-      console.log(this.deposits);
-      }, (err) => {
-        this.notifi.error('While fetching data');
-      }
-    );
+    // this.deposits = [];
+    // this.loansService.getDepositsOfLoan(this.loan).subscribe((data: any) => {
+    //   this.deposits = this.financeService.processLoanHistory(data, this.loan.req_date,
+    //     Number(this.loan.amount) * 100,
+    //     Number(this.loan.duration_months),
+    //     Number(this.loan.rate),
+    //     Number(this.loan.rental) * 100,
+    //     Number(this.loan.total) * 100,
+    //     0);
+    //   console.log(this.deposits);
+    //   }, (err) => {
+    //     this.notifi.error('While fetching data');
+    //   }
+    // );
   }
 
   gotoCustomer(i) {
@@ -270,6 +272,7 @@ export class LoansComponent implements OnInit, AfterViewInit {
 
   refreshLoans() {
     this.loansDataTableSearch = '';
+    this.actionMode = '';
     this.getAllLoans();
     this.getAllCustomers();
     this.searchData();
@@ -393,7 +396,7 @@ export class LoansComponent implements OnInit, AfterViewInit {
         '<button class="btn btn-mini btn-danger deleteLoan"> <i class="icofont icofont-ui-delete" aria-hidden="true"></i></button>';
 
       const memberID =
-        `<button class="btn btn-mini btn-info gotoCustomer">` + this.financeService.getCustomerCode(loan.member_id) + `</button>`;
+        `<button class="btn btn-mini btn-info gotoCustomer">` + loan.member_name + `</button>`;
       const loanID =
         `<button class="btn btn-mini btn-info gotoLoanDeposits">` + this.financeService.getLoanCode(loan.id) + `</button>`;
 

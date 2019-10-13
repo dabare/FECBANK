@@ -98,60 +98,8 @@
                 <div class="text-center">
                   <h4 class="text-center">{{financeService.getLoanCode(loan.id)}} -- {{financeService.getCustomerCode(loan.member_id)}}</h4>
                 </div>
-                <h4>Loan Information</h4>
-                <table class="table" border="1">
-                  <thead class="table-mail">
-                  <tr>
-                    <th scope="col">Date Initiated</th>
-                    <td>{{loan.req_date}}</td>
-                    <th scope="col">Rate %</th>
-                    <td>{{loan.rate}}</td>
-                    <th scope="col">Status</th>
-                    <td>{{loanStatus[loan.status]}}</td>
-                  </tr>
-                  <tr>
-                    <th>Amount (Rs.)</th>
-                    <td>{{financeService.toLocale(loan.amount)}}</td>
-                    <th>Total Interest (Rs.)</th>
-                    <td>{{financeService.toLocale(loan.interest)}}</td>
-                    <th>Total Payment (Rs.)</th>
-                    <td>{{financeService.toLocale(loan.total)}}</td>
-                  </tr>
-                  <tr>
-                    <th>Duration (Months)</th>
-                    <td>{{loan.duration_months}}</td>
-                    <th>Rental (Rs.)</th>
-                    <td>{{financeService.toLocale(loan.rental)}}</td>
-                    <th>Note</th>
-                    <td>{{loan.note}}</td>
-                  </tr>
-                  </thead>
-                  <tbody>
 
-                  </tbody>
-                </table>
-                <br>
-                <h4>Loan Timeline</h4>
-                <table class="table" border="1">
-                  <thead class="table-mail">
-                  <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Date</th>
-                    <th scope="col">Description</th>
-                    <th scope="col">Credit Amount (Rs.)</th>
-                    <th scope="col">Debit Amount (Rs.)</th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  <tr *ngFor="let rec of deposits; let i = index">
-                    <td class="text-center" scope="row">{{i + 1}}</td>
-                    <td>{{rec.req_date}}</td>
-                    <td>{{rec.description}}</td>
-                    <td class="text-right">{{financeService.cents2rupees(rec.credit)}}</td>
-                    <td class="text-right">{{financeService.cents2rupees(rec.debit)}}</td>
-                  </tr>
-                  </tbody>
-                </table>
+                <app-customer-loan-timeline [loan]="loan" [loanId]="loan.id" [customerName]="loan.member_name"></app-customer-loan-timeline>
               </div>
             </div>
           </div>

@@ -7,7 +7,7 @@ declare var $: any;
 declare var jQuery: any;
 
 @Component({
-  selector: 'app-tables',
+  selector: 'app-saving-rate',
   templateUrl: './saving-rate.component.html',
   styleUrls: ['./saving-rate.component.scss']
 })

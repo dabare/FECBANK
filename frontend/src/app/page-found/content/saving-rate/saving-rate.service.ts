@@ -27,6 +27,7 @@ export class SavingRateService {
   }
 
   cancelMemberSavingRate(data: any) {
+    data.req_user = this.loginService.getUser().id;
     return this.httpClient.post(environment.apiUrl + '/cancelMemberSavingRate', data);
   }
 }

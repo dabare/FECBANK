@@ -27,6 +27,7 @@ export class CustomerService {
   }
 
   deleteCustomer(customer: any) {
+    customer.req_user = this.loginService.getUser().id;
     return this.httpClient.post(environment.apiUrl + '/deleteMember', customer);
   }
 
