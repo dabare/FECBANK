@@ -88,7 +88,8 @@ export class SavingsComponent implements OnInit, AfterViewInit {
         this.notifi.success('Deposit inserted');
         $('#new_Saving').modal('hide');
       }, (err) => {
-        this.notifi.error('While inserting Deposit');
+      this.saving.amount = (Number(this.saving.amount) / 100) + '';
+      this.notifi.error('While inserting Deposit');
       }
     );
   }
@@ -103,6 +104,7 @@ export class SavingsComponent implements OnInit, AfterViewInit {
         this.notifi.success('Withdrawal inserted');
         $('#new_Saving').modal('hide');
       }, (err) => {
+        this.saving.amount = (Number(this.saving.amount) / 100) + '';
         this.notifi.error('While inserting Withdrawal');
       }
     );
@@ -144,6 +146,7 @@ export class SavingsComponent implements OnInit, AfterViewInit {
         this.notifi.success('Deposit updated');
         $('#new_Saving').modal('hide');
       }, (err) => {
+        this.saving.amount = (Number(this.saving.amount) / 100) + '';
         this.notifi.error('While updating Deposit');
       }
     );
@@ -159,6 +162,7 @@ export class SavingsComponent implements OnInit, AfterViewInit {
         this.notifi.success('Withdrawal updated');
         $('#new_Saving').modal('hide');
       }, (err) => {
+        this.saving.amount = (Number(this.saving.amount) / 100) + '';
         this.notifi.error('While updating Withdrawal');
       }
     );

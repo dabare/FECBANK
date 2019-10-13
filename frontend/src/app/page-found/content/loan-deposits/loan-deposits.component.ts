@@ -80,7 +80,8 @@ export class LoanDepositsComponent implements OnInit, AfterViewInit {
         this.notifi.success('Deposit inserted');
         $('#new_LoanDeposit').modal('hide');
       }, (err) => {
-        this.notifi.error('While inserting Deposit');
+      this.loanDeposit.amount = (Number(this.loanDeposit.amount) / 100) + '';
+      this.notifi.error('While inserting Deposit');
       }
     );
   }
@@ -113,6 +114,7 @@ export class LoanDepositsComponent implements OnInit, AfterViewInit {
         this.notifi.success('Deposit Updated');
         $('#new_LoanDeposit').modal('hide');
       }, (err) => {
+        this.loanDeposit.amount = (Number(this.loanDeposit.amount) / 100) + '';
         this.notifi.error('While Updating Deposit');
       }
     );

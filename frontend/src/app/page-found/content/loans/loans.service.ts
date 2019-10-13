@@ -34,8 +34,4 @@ export class LoansService {
   getAllCustomers() {
     return this.httpClient.post(environment.apiUrl + '/viewAllMembers', {});
   }
-
-  getDepositsOfLoan(data: any) {
-    return this.httpClient.post(environment.apiUrl + '/viewDepositsOfLoan', data);
-  }
 }

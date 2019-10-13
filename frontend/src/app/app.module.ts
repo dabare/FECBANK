@@ -34,6 +34,7 @@ import {SavingRateComponent} from './page-found/content/saving-rate/saving-rate.
 import {SavingsComponent} from './page-found/content/savings/savings.component';
 import {CustomerSavingsTimelineComponent} from './page-found/content/tables/customer-savings-timeline/customer-savings-timeline.component';
 import {CustomerLoanTimelineComponent} from "./page-found/content/tables/customer-loan-timeline/customer-loan-timeline.component";
+import {CustomerLoansComponent} from "./page-found/content/tables/customer-loans/customer-loans.component";
 
 @NgModule({
   declarations: [
@@ -58,7 +59,8 @@ import {CustomerLoanTimelineComponent} from "./page-found/content/tables/custome
     SavingRateComponent,
     SavingsComponent,
     CustomerSavingsTimelineComponent,
-    CustomerLoanTimelineComponent
+    CustomerLoanTimelineComponent,
+    CustomerLoansComponent
   ],
   imports: [
     BrowserModule,

@@ -96,6 +96,10 @@ export class LoansComponent implements OnInit, AfterViewInit {
         this.notifi.success('Loan inserted');
         $('#new_Loan').modal('hide');
       }, (err) => {
+        this.loan.amount = (Number(this.loan.amount) / 100) + '';
+        this.loan.charges = (Number(this.loan.charges) / 100) + '';
+        this.loan.late_payment_charge = (Number(this.loan.late_payment_charge) / 100) + '';
+        this.loan.reject_cheque_penalty = (Number(this.loan.reject_cheque_penalty) / 100) + '';
         this.notifi.error('While inserting Loan');
       }
     );
@@ -155,7 +159,11 @@ export class LoansComponent implements OnInit, AfterViewInit {
         this.notifi.success('Loan Updated');
         $('#new_Loan').modal('hide');
       }, (err) => {
-        this.notifi.error('While Updating Loan');
+      this.loan.amount = (Number(this.loan.amount) / 100) + '';
+      this.loan.charges = (Number(this.loan.charges) / 100) + '';
+      this.loan.late_payment_charge = (Number(this.loan.late_payment_charge) / 100) + '';
+      this.loan.reject_cheque_penalty = (Number(this.loan.reject_cheque_penalty) / 100) + '';
+      this.notifi.error('While Updating Loan');
       }
     );
   }

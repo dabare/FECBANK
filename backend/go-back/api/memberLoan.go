@@ -30,7 +30,7 @@ func viewAllMemberLoansGivenMemberId(w http.ResponseWriter, r *http.Request) {
 						FROM `+userDbReplaceStr+`.member_loan AS m 
 						LEFT JOIN `+userDB+`.user AS u ON m.req_user=u.id 
 						LEFT JOIN `+userDbReplaceStr+`.member AS mm ON m.member_id=mm.id 
-						WHERE m.status <> 0 AND mm.status <> 0 AND mmm.status <> 0 AND m.member_id=(:id)
+						WHERE m.status <> 0 AND mm.status <> 0 AND m.member_id=(:id)
 						ORDER BY m.id DESC`)
 }
 

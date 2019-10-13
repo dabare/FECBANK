@@ -3,6 +3,7 @@ import {FinanceService} from '../../utils/finance.service';
 import {CustomerSavingsTimelineService} from './customer-savings-timeline.service';
 import {NotificationsService} from '../../../../utils/notifications';
 import Swal from 'sweetalert2';
+
 declare var $: any;
 declare var jQuery: any;
 
@@ -120,6 +121,7 @@ export class CustomerSavingsTimelineComponent implements OnChanges {
         this.notifi.success('Deposit inserted');
         $('#new_Saving').modal('hide');
       }, (err) => {
+        this.saving.amount = (Number(this.saving.amount) / 100) + '';
         this.notifi.error('While inserting Deposit');
       }
     );
@@ -135,6 +137,7 @@ export class CustomerSavingsTimelineComponent implements OnChanges {
         this.notifi.success('Withdrawal inserted');
         $('#new_Saving').modal('hide');
       }, (err) => {
+        this.saving.amount = (Number(this.saving.amount) / 100) + '';
         this.notifi.error('While inserting Withdrawal');
       }
     );
@@ -150,6 +153,7 @@ export class CustomerSavingsTimelineComponent implements OnChanges {
         this.notifi.success('Deposit updated');
         $('#new_Saving').modal('hide');
       }, (err) => {
+        this.saving.amount = (Number(this.saving.amount) / 100) + '';
         this.notifi.error('While updating Deposit');
       }
     );
@@ -165,6 +169,7 @@ export class CustomerSavingsTimelineComponent implements OnChanges {
         this.notifi.success('Withdrawal updated');
         $('#new_Saving').modal('hide');
       }, (err) => {
+        this.saving.amount = (Number(this.saving.amount) / 100) + '';
         this.notifi.error('While updating Withdrawal');
       }
     );
@@ -334,7 +339,7 @@ export class CustomerSavingsTimelineComponent implements OnChanges {
 
       this.customerSavingsTimelineDatatable.row.add([saving.index + 1, saving.req_date, saving.description,
         this.financeService.cents2rupees(saving.amount),
-        saving.rate, saving.days_passed,  this.financeService.cents2rupees(saving.interest),
+        saving.rate, saving.days_passed, this.financeService.cents2rupees(saving.interest),
         this.financeService.cents2rupees(saving.balance), this.financeService.cents2rupees(saving.total), action]);
 
     }

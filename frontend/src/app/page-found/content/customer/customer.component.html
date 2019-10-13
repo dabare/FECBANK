@@ -84,18 +84,39 @@
       </div>
 
       <div class="card" [hidden]="actionMode!='info'">
-
         <div class="card-block">
           <div class="page-body">
-
             <div class="row">
               <div class="col-sm-12">
-
                 <div class="text-center">
                   <h4 class="text-center">{{financeService.getCustomerCode(customer.id)}} -- {{customer.name}}</h4>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" [hidden]="actionMode!='info'">
+        <div class="card-block">
+          <div class="page-body">
+            <div class="row">
+              <div class="col-sm-12">
                 <h4>Savings Timeline</h4>
                 <app-customer-savings-timeline [customerId]="customer.id" [customerName]="customer.name"></app-customer-savings-timeline>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" [hidden]="actionMode!='info'">
+        <div class="card-block">
+          <div class="page-body">
+            <div class="row">
+              <div class="col-sm-12">
+                <h4>Loan List</h4>
+                <app-customer-loans [customerId]="customer.id" [customerName]="customer.name"></app-customer-loans>
               </div>
             </div>
           </div>

@@ -26,6 +26,8 @@ export class LoginService {
     3: 'app/dashboard',
   };
 
+  private tryingAutoLoging = false;
+
   public login(username, password) {
     password = this.getHash(password);
     this.loginEndpoint(username, password).subscribe((data: any) => {
@@ -43,16 +45,18 @@ export class LoginService {
   }
 
   private autoLogin() {
+    this.tryingAutoLoging = true;
     this.loginEndpoint(this.getUser().uname, this.getUser().pass).subscribe((data: any) => {
         if (data.user.length > 0 && data.user[0].uname === this.getUser().uname && data.user[0].pass === this.getUser().pass) {
           localStorage.setItem('oidfjntid', JSON.stringify(data));
           this.notifi.info('Session Refreshed');
-          this.routeToDefault();
         }
+        this.tryingAutoLoging = false;
       }, (err) => {
         if (err.toString() !== 'Unknown Error') {
-          this.notifi.info('Autologin Failed');
+          this.notifi.error('Autologin Failed');
         }
+        this.tryingAutoLoging = false;
       }
     );
   }
@@ -96,9 +100,9 @@ export class LoginService {
   }
 
   public refreshToken() {
-    if (this.isTokenValid() && (this.getTokenValidTime() < 60 * 10)) {
+    if (this.isTokenValid() && (this.getTokenValidTime() < 60 * 10) && !this.tryingAutoLoging) {
       this.notifi.info('Your session is about to expire. Trying to revalidate...');
-      //this.autoLogin();
+      this.autoLogin();
     } else if (!this.isTokenValid()) {
       // this.tokenExpiredRedirectToLogin();
     }

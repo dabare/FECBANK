@@ -178,6 +178,7 @@ export class CustomerLoanTimelineComponent implements OnChanges {
         this.notifi.success('Deposit inserted');
         $('#new_LoanDeposit').modal('hide');
       }, (err) => {
+        this.loanDeposit.amount = (Number(this.loanDeposit.amount) / 100) + '';
         this.notifi.error('While inserting Deposit');
       }
     );

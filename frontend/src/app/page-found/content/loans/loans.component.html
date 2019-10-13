@@ -96,7 +96,7 @@
               <div class="col-sm-12">
 
                 <div class="text-center">
-                  <h4 class="text-center">{{financeService.getLoanCode(loan.id)}} -- {{financeService.getCustomerCode(loan.member_id)}}</h4>
+                  <h4 class="text-center">{{financeService.getLoanCode(loan.id)}} -- {{loan.member_name}}</h4>
                 </div>
 
                 <app-customer-loan-timeline [loan]="loan" [loanId]="loan.id" [customerName]="loan.member_name"></app-customer-loan-timeline>
