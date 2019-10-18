@@ -4,7 +4,18 @@
     <!-- Main-body start -->
     <div class="main-body">
       <div class="card">
-        <div class="card-block">
+        <div class="card-header">
+          <h4>All Members</h4>
+          <div class="card-header-right">
+            <ul class="list-unstyled card-option" style="width: 190px;">
+<!--              <li><i class="fa fa-window-maximize full-card"></i></li>-->
+              <li (click)="toggleHideAllMem()"><i *ngIf="!hideAllMembers" class="fa fa-minus"></i>
+                <i *ngIf="hideAllMembers" class="fa fa-plus"></i>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="card-block" [hidden]="hideAllMembers">
           <div class="page-body">
             <div class="row">
               <div class="col-sm-2">
@@ -83,26 +94,45 @@
         </div>
       </div>
 
-      <div class="card" *ngIf="actionMode=='info'">
-        <div class="card-block">
+      <div class="card" [hidden]="actionMode!='info'">
+        <div class="card-header">
+          <h4 class="text-center">{{financeService.getCustomerCode(customer.id)}} -- {{customer.name}}</h4>
+          <div class="card-header-right">
+            <ul class="list-unstyled card-option" style="width: 190px;">
+              <!--              <li><i class="fa fa-window-maximize full-card"></i></li>-->
+              <li (click)="toggleHideMemPhoto()"><i *ngIf="!hideMemPhoto" class="fa fa-minus"></i>
+                <i *ngIf="hideMemPhoto" class="fa fa-plus"></i>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="card-block" [hidden]="hideMemPhoto">
           <div class="page-body">
             <div class="row">
               <div class="col-sm-12">
-                <div class="text-center">
-                  <h4 class="text-center">{{financeService.getCustomerCode(customer.id)}} -- {{customer.name}}</h4>
-                </div>
+                <app-gallery></app-gallery>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="card" *ngIf="actionMode=='info'">
-        <div class="card-block">
+      <div class="card" [hidden]="actionMode!='info'">
+        <div class="card-header">
+          <h4>Savings Timeline</h4>
+          <div class="card-header-right">
+            <ul class="list-unstyled card-option" style="width: 190px;">
+              <!--              <li><i class="fa fa-window-maximize full-card"></i></li>-->
+              <li (click)="toggleHideSavingINfo()"><i *ngIf="!hideSavingInfo" class="fa fa-minus"></i>
+                <i *ngIf="hideSavingInfo" class="fa fa-plus"></i>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="card-block" [hidden]="hideSavingInfo">
           <div class="page-body">
             <div class="row">
               <div class="col-sm-12">
-                <h4>Savings Timeline</h4>
                 <app-customer-savings-timeline [customerId]="customer.id" [customerName]="customer.name"></app-customer-savings-timeline>
               </div>
             </div>
@@ -110,12 +140,22 @@
         </div>
       </div>
 
-      <div class="card" *ngIf="actionMode=='info'">
-        <div class="card-block">
+      <div class="card" [hidden]="actionMode!='info'">
+        <div class="card-header">
+          <h4>Loan List</h4>
+          <div class="card-header-right">
+            <ul class="list-unstyled card-option" style="width: 190px;">
+              <!--              <li><i class="fa fa-window-maximize full-card"></i></li>-->
+              <li (click)="toggleHideLoanInfo()"><i *ngIf="!hideLoanInfo" class="fa fa-minus"></i>
+                <i *ngIf="hideLoanInfo" class="fa fa-plus"></i>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="card-block" [hidden]="hideLoanInfo">
           <div class="page-body">
             <div class="row">
               <div class="col-sm-12">
-                <h4>Loan List</h4>
                 <app-customer-loans [customerId]="customer.id" [customerName]="customer.name"></app-customer-loans>
               </div>
             </div>

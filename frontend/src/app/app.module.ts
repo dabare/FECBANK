@@ -36,6 +36,7 @@ import {CustomerSavingsTimelineComponent} from './page-found/content/tables/cust
 import {CustomerLoanTimelineComponent} from "./page-found/content/tables/customer-loan-timeline/customer-loan-timeline.component";
 import {CustomerLoansComponent} from "./page-found/content/tables/customer-loans/customer-loans.component";
 import { GraphComponent } from './page-found/content/tables/graph/graph.component';
+import { GalleryComponent } from './page-found/content/tables/gallery/gallery.component';
 
 @NgModule({
   declarations: [
@@ -62,7 +63,8 @@ import { GraphComponent } from './page-found/content/tables/graph/graph.componen
     CustomerSavingsTimelineComponent,
     CustomerLoanTimelineComponent,
     CustomerLoansComponent,
-    GraphComponent
+    GraphComponent,
+    GalleryComponent
   ],
   imports: [
     BrowserModule,

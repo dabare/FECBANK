@@ -45,10 +45,27 @@ export class CustomerComponent implements OnInit, AfterViewInit {
 
   savingHistory: any[] = [];
 
+  hideAllMembers = false;
+  hideSavingInfo = false;
+  hideLoanInfo = false;
+  hideMemPhoto = false;
+
   constructor(private route: ActivatedRoute, private customerService: CustomerService,
               private notifi: NotificationsService, public financeService: FinanceService) {
   }
 
+  toggleHideAllMem(){
+    this.hideAllMembers = !this.hideAllMembers;
+  }
+  toggleHideMemPhoto(){
+    this.hideMemPhoto = !this.hideMemPhoto;
+  }
+  toggleHideSavingINfo(){
+    this.hideSavingInfo = !this.hideSavingInfo;
+  }
+  toggleHideLoanInfo(){
+    this.hideLoanInfo = !this.hideLoanInfo;
+  }
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {

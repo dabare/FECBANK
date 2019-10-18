@@ -88,7 +88,6 @@ export class CustomerLoanTimelineComponent implements OnChanges {
     this.actionMode = 'info';
     this.deposits = [];
     this.customerLoanTimelineService.getDepositsOfLoan(this.loan).subscribe((data: any) => {
-      console.log(this.loan);
         this.deposits = this.financeService.processLoanHistory(data, this.loan.req_date,
           Number(this.loan.amount) * 100,
           Number(this.loan.duration_months),
