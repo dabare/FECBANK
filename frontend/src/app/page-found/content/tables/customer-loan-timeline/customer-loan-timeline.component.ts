@@ -47,7 +47,10 @@ export class CustomerLoanTimelineComponent implements OnChanges {
     updated_by: '',
     rental: '',
     interest: '',
-    total: ''
+    total: '',
+    member_name: '',
+    nextDueDate: '',
+    nextDueAmount: '',
   };
 
   loanDeposit = {
@@ -271,16 +274,14 @@ export class CustomerLoanTimelineComponent implements OnChanges {
 
   drawTable() {
     this.initDataTable();
-
     this.customerLoanTimelineDatatable.clear();
-
-    console.log(this.deposits);
     for (const deposit of this.deposits) {
       let action = '';
 
       if (deposit.trx_type === 'DEPOSIT') {
         action =
-          '<button class="btn btn-mini btn-danger clickDeleteLoanDeposit"> <i class="icofont icofont-ui-delete" aria-hidden="true"></i></button>';
+          '<button class="btn btn-mini btn-danger clickDeleteLoanDeposit">' +
+          '<i class="icofont icofont-ui-delete" aria-hidden="true"></i></button>';
       }
 
       this.customerLoanTimelineDatatable.row.add([deposit.index + 1, deposit.req_date, deposit.description,

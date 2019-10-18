@@ -27,10 +27,15 @@
         <th>Note</th>
         <td>{{loan.note}}</td>
       </tr>
+      <tr>
+        <th scope="col">Last Updated By</th>
+        <td>{{loan.updated_by}}</td>
+        <th scope="col">Next Due Date</th>
+        <td>{{loan.nextDueDate? loan.nextDueDate : '-'}}</td>
+        <th scope="col">Next Due Amount</th>
+        <td>{{loan.nextDueAmount}}</td>
+      </tr>
       </thead>
-      <tbody>
-
-      </tbody>
     </table>
     <br>
     <h4>Loan Timeline</h4>

@@ -332,10 +332,12 @@ export class CustomerSavingsTimelineComponent implements OnChanges {
 
       if (saving.trx_type === 'DEPOSIT') {
         action =
-          '<button class="btn btn-mini btn-danger clickDeleteSaving"> <i class="icofont icofont-ui-delete" aria-hidden="true"></i></button>';
+          '<button class="btn btn-mini btn-danger clickDeleteSaving">' +
+          '<i class="icofont icofont-ui-delete" aria-hidden="true"></i></button>';
       } else if (saving.trx_type === 'WITHDRAWAL') {
         action =
-          '<button class="btn btn-mini btn-danger clickDeleteWithdrawal"> <i class="icofont icofont-ui-delete" aria-hidden="true"></i></button>';
+          '<button class="btn btn-mini btn-danger clickDeleteWithdrawal">' +
+          '<i class="icofont icofont-ui-delete" aria-hidden="true"></i></button>';
       }
 
       this.customerSavingsTimelineDatatable.row.add([saving.index + 1, saving.req_date, saving.description,

@@ -5,6 +5,7 @@ import {LoansService} from './loans.service';
 import {FinanceService} from '../utils/finance.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {LeftNavBarService} from '../../left-nav-bar/left-nav-bar.service';
+import {environment} from '../../../../environments/environment.prod';
 
 declare var $: any;
 declare var jQuery: any;
@@ -52,6 +53,8 @@ export class LoansComponent implements OnInit, AfterViewInit {
     interest: '',
     total: '',
     member_name: '',
+    nextDueDate: '',
+    nextDueAmount: '',
   };
 
   customers: any[] = [];
@@ -112,7 +115,6 @@ export class LoansComponent implements OnInit, AfterViewInit {
   }
 
   loadLoan(i) {
-    this.loan.id = this.loans[i].id;
     this.loan.code = this.loans[i].code;
     this.loan.member_id = this.loans[i].member_id;
     this.loan.member_loan_plan_id = this.loans[i].member_loan_plan_id;
@@ -137,6 +139,9 @@ export class LoansComponent implements OnInit, AfterViewInit {
     this.loan.interest = this.financeService.cents2rupees(interest);
     this.loan.total = this.financeService.cents2rupees(total);
     this.loan.member_name = this.loans[i].member_name;
+    this.loan.id = this.loans[i].id;
+    this.loan.nextDueAmount = this.loans[i].nextDueAmount;
+    this.loan.nextDueDate = this.loans[i].nextDueDate;
   }
 
   clickEditLoan(i) {
@@ -249,8 +254,33 @@ export class LoansComponent implements OnInit, AfterViewInit {
     this.loan.rental = '0.00';
     this.loan.interest = '0.00';
     this.loan.total = '0.00';
+    this.loan.nextDueDate = '';
+    this.loan.nextDueAmount = '';
 
     this.loan.user_set_req_date = today;
+  }
+
+  getLoanDetails() {
+    for (let i = 0; i < this.loans.length; i++) {
+      if(this.loans[i].status === '1'){
+        this.loansService.getDepositsOfLoan(this.loans[i]).subscribe((data: any) => {
+            data  = this.financeService.processLoanHistory(data, this.loans[i].req_date,
+              Number(this.loans[i].amount) * 100,
+              Number(this.loans[i].duration_months),
+              Number(this.loans[i].rate),
+              Number(this.loans[i].rental) * 100,
+              Number(this.loans[i].total) * 100,
+              0);
+            this.loans[i].nextDueDate = data[data.length - 1].nextDueDate;
+            this.loans[i].nextDueAmount = this.financeService.toLocale(data[data.length - 1].nextDueAmount);
+            this.drawTable();
+          }, (err) => {
+            this.notifi.error('While fetching Loan details');
+          }
+        );
+      }
+
+    }
   }
 
   getAllLoans() {
@@ -258,6 +288,7 @@ export class LoansComponent implements OnInit, AfterViewInit {
     this.loansService.getAllMemberLoans().subscribe((data: any) => {
         this.loans = data;
         this.addIndex(this.loans);
+        this.getLoanDetails();
         this.drawTable();
       }, (err) => {
         this.notifi.error('While fetching Loan details');
@@ -341,7 +372,7 @@ export class LoansComponent implements OnInit, AfterViewInit {
           },
           {
             className: 'text-center',
-            targets: [1, 2, 3, 4, 6, 9, 10, 11]
+            targets: [1, 2, 3, 4, 6, 9, 11]
           }],
         order: [[0, 'asc']],
       });
@@ -424,7 +455,8 @@ export class LoansComponent implements OnInit, AfterViewInit {
         memberID,
         loan.req_date, loan.rate + '%', this.financeService.toLocale(this.financeService.cents2rupees(loan.amount)),
         loan.duration_months, this.financeService.toLocale(this.financeService.cents2rupees(loan.rental)), loan.note,
-        loan.updated_by, this.loanStatus[loan.status], action]);
+        loan.nextDueDate ? loan.nextDueDate : '-',
+          this.loanStatus[loan.status], action]);
 
     }
     this.loansDataTable.draw();

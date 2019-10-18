@@ -106,7 +106,6 @@ export class CustomerLoansComponent implements OnInit, OnChanges {
   }
 
   loadLoan(i) {
-    this.loan.id = this.loans[i].id;
     this.loan.code = this.loans[i].code;
     this.loan.member_id = this.loans[i].member_id;
     this.loan.member_loan_plan_id = this.loans[i].member_loan_plan_id;
@@ -131,6 +130,7 @@ export class CustomerLoansComponent implements OnInit, OnChanges {
     this.loan.interest = this.financeService.cents2rupees(interest);
     this.loan.total = this.financeService.cents2rupees(total);
     this.loan.member_name = this.loans[i].member_name;
+    this.loan.id = this.loans[i].id;
   }
 
   clickEditLoan(i) {

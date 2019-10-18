@@ -35,6 +35,7 @@ import {SavingsComponent} from './page-found/content/savings/savings.component';
 import {CustomerSavingsTimelineComponent} from './page-found/content/tables/customer-savings-timeline/customer-savings-timeline.component';
 import {CustomerLoanTimelineComponent} from "./page-found/content/tables/customer-loan-timeline/customer-loan-timeline.component";
 import {CustomerLoansComponent} from "./page-found/content/tables/customer-loans/customer-loans.component";
+import { GraphComponent } from './page-found/content/tables/graph/graph.component';
 
 @NgModule({
   declarations: [
@@ -60,7 +61,8 @@ import {CustomerLoansComponent} from "./page-found/content/tables/customer-loans
     SavingsComponent,
     CustomerSavingsTimelineComponent,
     CustomerLoanTimelineComponent,
-    CustomerLoansComponent
+    CustomerLoansComponent,
+    GraphComponent
   ],
   imports: [
     BrowserModule,

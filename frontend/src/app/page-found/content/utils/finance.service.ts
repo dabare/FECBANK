@@ -52,7 +52,6 @@ export class FinanceService {
     return 'LOAN' + id;
   }
 
-
   public cents2rupees(cents) {
     cents = Math.ceil(cents);
     let sign = '';
@@ -143,11 +142,16 @@ export class FinanceService {
     return Math.ceil(principalAmount * annualRate * a / (1200 * (a - 1)));
   }
 
-  public processLoanHistory(data: any[], initDate, amount, durationMonths, rate, rental, total, penalty) {
-    return this.addIndex(this.mapLoanPaymentWithDays(data, this.getLoanSettlementDates(initDate, durationMonths, total, rental)));
+  private getLoanInterest(remainingAmount, annualRate) {
+    return remainingAmount * annualRate / (1200);
   }
 
-  private getLoanSettlementDates(initDate, durationMonths, total, rental) {
+  public processLoanHistory(data: any[], initDate, amount, durationMonths, rate, rental, total, penalty) {
+    return this.addIndex(this.mapLoanPaymentWithDays(data,
+      this.getLoanSettlementDates(rate, initDate, durationMonths, amount, total, rental), rental));
+  }
+
+  private getLoanSettlementDates(rate, initDate, durationMonths, amount, total, rental) {
     const days = [];
     let paymentInitDate = '05'; // pays 5th 15th or 25th
     let paymentInitMonth = Number(initDate.split('-')[1]) - 1;
@@ -170,7 +174,13 @@ export class FinanceService {
       description: 'Agreement',
       credit: 0,
       debit: total,
-      trx_type: 'INIT'
+      trx_type: 'INIT',
+      beginning_balace: 0,
+      principal: 0,
+      interest: 0,
+      ending_balance: amount,
+      cumulative_interest: 0,
+      total: 0,
     });
 
     for (let i = 0; i < durationMonths; i++) {
@@ -179,19 +189,30 @@ export class FinanceService {
       if (paymentInitMonth === 0) {// if january, means last was december, so new year
         paymentInitYear++;
       }
+      const intrst = this.getLoanInterest(days[i].ending_balance, rate);
       days.push({
         id: '-1',
         req_date: paymentInitYear + '-' + (paymentInitMonth < 9 ? '0' : '' ) + (paymentInitMonth + 1) + '-' + paymentInitDate,
         description: 'Due amount: Rs. ' + this.toLocale(this.cents2rupees(rental)) + '/=',
         credit: 0,
         debit: 0,
-        trx_type: 'DUEDATE'
+        trx_type: 'DUEDATE',
+
+        beginning_balace: days[i].ending_balance,
+        principal: rental - intrst,
+        interest: intrst,
+        ending_balance: days[i].ending_balance - (rental - intrst),
+        cumulative_interest: days[i].cumulative_interest + intrst,
+        total: rental,
       });
     }
+    days[durationMonths].principal += days[durationMonths].ending_balance;
+    days[durationMonths].ending_balance = 0;
+    days[durationMonths].total = days[durationMonths].principal + days[durationMonths].interest;
     return days;
   }
 
-  private mapLoanPaymentWithDays(payments: any[], days: any[]) {
+  private mapLoanPaymentWithDays(payments: any[], days: any[], rental) {
     let credit = Number(days[0].credit);
     let debit = Number(days[0].debit);
     for (let i = 0; i < payments.length; i++) {
@@ -208,7 +229,14 @@ export class FinanceService {
       description: 'Total',
       credit: credit + '',
       debit: debit + '',
-      trx_type: 'TOT'
+      trx_type: 'TOT',
+
+      beginning_balace: '',
+      principal: '',
+      interest: '',
+      ending_balance: '',
+      cumulative_interest: '',
+      total: '',
     });
     const diff = debit - credit;
     debit = 0;
@@ -224,7 +252,16 @@ export class FinanceService {
       description: 'Difference',
       credit: credit + '',
       debit: debit + '',
-      trx_type: 'TOT'
+      trx_type: 'TOT',
+
+      beginning_balace: '',
+      principal: '',
+      interest: '',
+      ending_balance: '',
+      cumulative_interest: '',
+      total: '',
+      nextDueDate: days[payments.length + 1].req_date, // need to chnaged
+      nextDueAmount: this.cents2rupees(rental)
     });
     return days;
   }

@@ -16,6 +16,10 @@ export class LoansService {
     return this.httpClient.post(environment.apiUrl + '/viewAllMemberLoans', {});
   }
 
+  getDepositsOfLoan(data: any) {
+    return this.httpClient.post(environment.apiUrl + '/viewDepositsOfLoan', data);
+  }
+
   insertMemberLoan(data: any) {
     data.req_user = this.loginService.getUser().id;
     return this.httpClient.post(environment.apiUrl + '/insertMemberLoan', data);

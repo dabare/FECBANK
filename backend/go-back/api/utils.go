@@ -9,7 +9,7 @@ import (
 	"regexp"
 )
 
-func reqBody2JsonObj(r *http.Request) (map[string]interface{}, error){
+func reqBody2JsonObj(r *http.Request) (map[string]interface{}, error) {
 	log.Println("reqBody2JsonObj")
 
 	jsonObj := make(map[string]interface{})
@@ -20,15 +20,14 @@ func reqBody2JsonObj(r *http.Request) (map[string]interface{}, error){
 		return jsonObj, err
 	}
 
-	log.Println("request :"+string(jsonStr))
-
+	log.Println("request :" + string(jsonStr))
 
 	err = json.Unmarshal([]byte(jsonStr), &jsonObj)
 	if err != nil {
 		log.Println(err)
 		return jsonObj, err
 	}
-	return  jsonObj, nil
+	return jsonObj, nil
 }
 
 type requestStruct struct {
@@ -41,6 +40,22 @@ type requestStruct struct {
 	Order   string ""
 }
 
+//type requestFileStruct struct {
+//	Name   string ""
+//	Content string ""
+//}
+//
+//func decodeFileBody(r *http.Request) (requestFileStruct, error) {
+//	decoder := json.NewDecoder(r.Body)
+//	var req requestFileStruct
+//	err := decoder.Decode(&req)
+//	if err != nil {
+//		log.Println(err)
+//		return req, errors.New("INVALID JSON REQUEST")
+//	}
+//	return req, nil
+//}
+
 func decodeHTTPBody(r *http.Request) (requestStruct, error) {
 	decoder := json.NewDecoder(r.Body)
 	var req requestStruct
@@ -49,7 +64,7 @@ func decodeHTTPBody(r *http.Request) (requestStruct, error) {
 		log.Println(err)
 		return req, errors.New("INVALID JSON REQUEST")
 	}
-	if (checkSQLinjection(req.Values + req.Columns + req.Set + req.Order + req.Group + req.Where + req.Table)) {
+	if checkSQLinjection(req.Values + req.Columns + req.Set + req.Order + req.Group + req.Where + req.Table) {
 		log.Println("SQL INJECTION DETECTED")
 		return req, errors.New("SQL INJECTION DETECTED")
 	}
