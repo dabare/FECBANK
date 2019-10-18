@@ -33,7 +33,7 @@
         <th scope="col">Next Due Date</th>
         <td>{{loan.nextDueDate? loan.nextDueDate : '-'}}</td>
         <th scope="col">Next Due Amount</th>
-        <td>{{loan.nextDueAmount}}</td>
+        <td>{{loan.nextDueAmount? financeService.toLocale(loan.nextDueAmount):'-'}}</td>
       </tr>
       </thead>
     </table>

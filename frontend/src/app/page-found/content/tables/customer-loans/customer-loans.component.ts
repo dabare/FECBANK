@@ -59,6 +59,8 @@ export class CustomerLoansComponent implements OnInit, OnChanges {
     interest: '',
     total: '',
     member_name: '',
+    nextDueDate: '',
+    nextDueAmount: '',
   };
 
   constructor(private route: ActivatedRoute, private customerLoansService: CustomerLoansService, private notifi: NotificationsService,
@@ -131,6 +133,8 @@ export class CustomerLoansComponent implements OnInit, OnChanges {
     this.loan.total = this.financeService.cents2rupees(total);
     this.loan.member_name = this.loans[i].member_name;
     this.loan.id = this.loans[i].id;
+    this.loan.nextDueAmount = this.loans[i].nextDueAmount;
+    this.loan.nextDueDate = this.loans[i].nextDueDate;
   }
 
   clickEditLoan(i) {
@@ -225,8 +229,33 @@ export class CustomerLoansComponent implements OnInit, OnChanges {
     this.loan.rental = '0.00';
     this.loan.interest = '0.00';
     this.loan.total = '0.00';
+    this.loan.nextDueDate = '';
+    this.loan.nextDueAmount = '';
 
     this.loan.user_set_req_date = today;
+  }
+
+  getLoanDetails() {
+    for (let i = 0; i < this.loans.length; i++) {
+      if (this.loans[i].status === '1') {
+        this.customerLoansService.getDepositsOfLoan(this.loans[i]).subscribe((data: any) => {
+            data  = this.financeService.processLoanHistory(data, this.loans[i].req_date,
+              Number(this.loans[i].amount),
+              Number(this.loans[i].duration_months),
+              Number(this.loans[i].rate),
+              Number(this.loans[i].rental),
+              Number(this.loans[i].total),
+              0);
+            this.loans[i].nextDueDate = data[data.length - 1].nextDueDate;
+            this.loans[i].nextDueAmount = this.financeService.toLocale(data[data.length - 1].nextDueAmount);
+            this.drawTable();
+          }, (err) => {
+            this.notifi.error('While fetching Loan details');
+          }
+        );
+      }
+
+    }
   }
 
   getAllLoans() {
@@ -234,6 +263,7 @@ export class CustomerLoansComponent implements OnInit, OnChanges {
     this.customerLoansService.getAllMemberLoansGivenMemberId(this.customerId).subscribe((data: any) => {
         this.loans = data;
         this.financeService.addIndex(this.loans);
+        this.getLoanDetails();
         this.drawTable();
       }, (err) => {
         this.notifi.error('While fetching Loan details');
@@ -388,7 +418,7 @@ export class CustomerLoansComponent implements OnInit, OnChanges {
         memberID,
         loan.req_date, loan.rate + '%', this.financeService.toLocale(this.financeService.cents2rupees(loan.amount)),
         loan.duration_months, this.financeService.toLocale(this.financeService.cents2rupees(loan.rental)), loan.note,
-        loan.updated_by, this.loanStatus[loan.status], action]);
+        loan.nextDueDate ? loan.nextDueDate : '-', this.loanStatus[loan.status], action]);
 
     }
     this.loansDataTable.draw();

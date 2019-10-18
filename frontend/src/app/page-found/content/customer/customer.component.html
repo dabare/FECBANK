@@ -83,7 +83,7 @@
         </div>
       </div>
 
-      <div class="card" [hidden]="actionMode!='info'">
+      <div class="card" *ngIf="actionMode=='info'">
         <div class="card-block">
           <div class="page-body">
             <div class="row">
@@ -97,7 +97,7 @@
         </div>
       </div>
 
-      <div class="card" [hidden]="actionMode!='info'">
+      <div class="card" *ngIf="actionMode=='info'">
         <div class="card-block">
           <div class="page-body">
             <div class="row">
@@ -110,7 +110,7 @@
         </div>
       </div>
 
-      <div class="card" [hidden]="actionMode!='info'">
+      <div class="card" *ngIf="actionMode=='info'">
         <div class="card-block">
           <div class="page-body">
             <div class="row">

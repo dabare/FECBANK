@@ -262,17 +262,17 @@ export class LoansComponent implements OnInit, AfterViewInit {
 
   getLoanDetails() {
     for (let i = 0; i < this.loans.length; i++) {
-      if(this.loans[i].status === '1'){
+      if (this.loans[i].status === '1') {
         this.loansService.getDepositsOfLoan(this.loans[i]).subscribe((data: any) => {
             data  = this.financeService.processLoanHistory(data, this.loans[i].req_date,
-              Number(this.loans[i].amount) * 100,
+              Number(this.loans[i].amount),
               Number(this.loans[i].duration_months),
               Number(this.loans[i].rate),
-              Number(this.loans[i].rental) * 100,
-              Number(this.loans[i].total) * 100,
+              Number(this.loans[i].rental),
+              Number(this.loans[i].total),
               0);
             this.loans[i].nextDueDate = data[data.length - 1].nextDueDate;
-            this.loans[i].nextDueAmount = this.financeService.toLocale(data[data.length - 1].nextDueAmount);
+            this.loans[i].nextDueAmount = data[data.length - 1].nextDueAmount;
             this.drawTable();
           }, (err) => {
             this.notifi.error('While fetching Loan details');
