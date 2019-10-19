@@ -22,6 +22,6 @@ export class PrinterService {
   print(filename, data) {
     this.printObject.file = filename;
     this.printObject.data = data;
-    return this.httpClient.post(environment.middlewareUrl + '/printingApiUrl', this.printObject);
+    // return this.httpClient.post(environment.middlewareUrl + '/printingApiUrl', this.printObject);
   }
 }

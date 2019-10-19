@@ -57,11 +57,11 @@
             <i class="icofont icofont-refresh" aria-hidden="true"></i> Refresh
           </button>
           &nbsp;
-          <button style="padding: 10px;" class="btn btn-success" (click)="clickNewLoanDeposit()" [hidden]="loan.status!=1">
+          <button style="padding: 10px;" class="btn btn-success" (click)="clickNewLoanDeposit()" [hidden]="loan.status!='1'">
             <i class="icofont icofont-plus" aria-hidden="true"></i> Deposit
           </button>
           &nbsp;
-          <button style="padding: 10px;" class="btn btn-warning" (click)="clickCompleteLoanDeposit()" [hidden]="loan.status!=1">
+          <button style="padding: 10px;" class="btn btn-warning" (click)="clickCompleteLoanDeposit()" [hidden]="loan.status!='1'">
             <i class="icofont icofont-check" aria-hidden="true"></i> Complete Loan
           </button>
         </div>

@@ -110,7 +110,7 @@
           <div class="page-body">
             <div class="row">
               <div class="col-sm-12">
-                <app-gallery></app-gallery>
+<!--                <app-gallery></app-gallery>-->
               </div>
             </div>
           </div>
@@ -251,18 +251,18 @@
 
                           <br>
                           <input type="radio" name="radio" (click)="internalCustomerClicked()"
-                                 [checked]="customer.representative == -1">
+                                 [checked]="customer.representative == '-1'">
                           <i class="helper"></i>FEC Member
                           &nbsp;
                           <input type="radio" name="radio" (click)="externalCustomerClicked()"
-                                 [checked]="customer.representative != -1">
+                                 [checked]="customer.representative != '-1'">
                           <i class="helper"></i>External Member
                           <br>
 
                         </div>
                       </div>
                     </div>
-                    <div [hidden]="customer.representative == -1">
+                    <div [hidden]="customer.representative == '-1'">
                       <label class="j-label">Representative</label>
                       <div class="j-unit">
                         <div class="j-input">

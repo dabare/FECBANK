@@ -1,0 +1,6 @@
+python slaver.py -m 3.16.29.35:3333 -t 127.0.0.1:3306
+ng build --prod --aot
+
+
+set GOARCH=amd64
+set GOOS=linux

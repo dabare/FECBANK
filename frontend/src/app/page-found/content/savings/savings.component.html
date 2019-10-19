@@ -85,14 +85,14 @@
                     <th style="text-align:right" colspan="8">Total Current Page:</th>
                     <th style="text-align:right">{{totalCurrentDeposit}}</th>
                     <th style="text-align:right">{{totalCurrentWithdrawal}}</th>
-                    <th style="text-align:right">{{financeService.cents2rupees((totalCurrentDeposit - totalCurrentWithdrawal) * 100 )}}</th>
+                    <th style="text-align:right">{{financeService.cents2rupees(((totalCurrentDeposit | number) - (totalCurrentWithdrawal | number)) * 100 )}}</th>
                   </tr>
 
                   <tr>
                     <th style="text-align:right" colspan="8">Total All:</th>
                     <th style="text-align:right">{{totalAllDeposit}}</th>
                     <th style="text-align:right">{{totalAllWithdrawal}}</th>
-                    <th style="text-align:right">{{financeService.cents2rupees((totalAllDeposit - totalAllWithdrawal) * 100 )}}</th>
+                    <th style="text-align:right">{{financeService.cents2rupees(((totalAllDeposit | number) - (totalAllWithdrawal | number)) * 100 )}}</th>
                   </tr>
 
                   </tfoot>
@@ -132,7 +132,7 @@
                       <div class="j-unit">
                         <div class="j-input">
                           <label class="j-icon-right">
-                            <i class="icofont icofont-notebook"></i>
+                            <i class="icofont icofont-ui-user"></i>
                           </label>
                           <select [(ngModel)]="saving.member_id" name="select" class="form-control" [disabled]="actionMode=='edit'">
                             <option *ngFor="let cus of members" [ngValue]="cus.id">{{financeService.getCustomerCode(cus.id) + ' - ' + cus.name}}</option>

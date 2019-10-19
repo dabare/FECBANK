@@ -45,18 +45,4 @@ export class MenueBarComponent implements OnInit, AfterViewInit {
   logOut() {
     this.loginService.logout();
   }
-  getAllProducts() {
-    this.products = [];
-    this.menubarServie.getAllProduct().subscribe((data: any) => {
-      this.products=data;
-      for (var i = 0; i <  this.products.length; i++) { 
-        if ( Number(this.products[i].available_qty) <= Number(this.products[i].alert_qty)) {
-          this.products_all.push(this.products[i]);
-        }
-      } 
-     
-    }, (err) => {
-    }
-    );
-  }
 }
