@@ -16,7 +16,7 @@ export class LoginService {
     if (!this.isValidUser()) {
       this.logout();
     } else {
-      this.notifi.success('Welcome ' + this.getUser().name);
+      this.routeToDefault();
     }
   }
 
@@ -70,13 +70,13 @@ export class LoginService {
   public sessionTimeOutRedirectToLogin() {
     this.notifi.info('Your session has expired. Please login again.');
     localStorage.removeItem('oidfjntid');
-    // this.router.navigate(['login']);
+    this.router.navigate(['app/login']);
   }
 
   public tokenExpiredRedirectToLogin() {
     this.notifi.info('Your token has expired. Please login again.');
     localStorage.removeItem('oidfjntid');
-    // this.router.navigate(['login']);
+    this.router.navigate(['app/login']);
   }
 
   public isValidUser() {
