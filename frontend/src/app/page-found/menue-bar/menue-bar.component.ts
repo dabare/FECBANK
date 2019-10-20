@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { LoginService } from '../../login/login.service';
 import { NotificationsService } from 'src/app/utils/notifications';
 import { MenuBarService } from './menu-bar.service';
+import {LoginService} from '../../login.service';
 
 @Component({
   selector: 'app-menue-bar',

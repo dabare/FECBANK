@@ -1,8 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {LoginService} from '../../../login/login.service';
-import Swal from 'sweetalert2';
 import {NotificationsService} from '../../../utils/notifications';
 import {SystemSettingsService} from './system-settings.service';
+import {LoginService} from '../../../login.service';
 
 @Component({
   selector: 'app-system-settings',

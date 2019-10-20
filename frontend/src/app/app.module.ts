@@ -6,7 +6,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {NgbModule, NgbPaginationModule, NgbTabsetModule} from '@ng-bootstrap/ng-bootstrap';
-import { LoginComponent } from './login/login.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { PageFoundComponent } from './page-found/page-found.component';
 import { HeaderComponent } from './page-found/header/header.component';
@@ -33,10 +32,11 @@ import {LoanDepositsComponent} from './page-found/content/loan-deposits/loan-dep
 import {SavingRateComponent} from './page-found/content/saving-rate/saving-rate.component';
 import {SavingsComponent} from './page-found/content/savings/savings.component';
 import {CustomerSavingsTimelineComponent} from './page-found/content/tables/customer-savings-timeline/customer-savings-timeline.component';
-import {CustomerLoanTimelineComponent} from "./page-found/content/tables/customer-loan-timeline/customer-loan-timeline.component";
-import {CustomerLoansComponent} from "./page-found/content/tables/customer-loans/customer-loans.component";
+import {CustomerLoanTimelineComponent} from './page-found/content/tables/customer-loan-timeline/customer-loan-timeline.component';
+import {CustomerLoansComponent} from './page-found/content/tables/customer-loans/customer-loans.component';
 import { GraphComponent } from './page-found/content/tables/graph/graph.component';
 import { GalleryComponent } from './page-found/content/tables/gallery/gallery.component';
+import {LoginComponent} from './page-found/content/login/login.component';
 
 @NgModule({
   declarations: [

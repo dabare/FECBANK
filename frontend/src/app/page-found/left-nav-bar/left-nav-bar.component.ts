@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {LeftNavBarService} from './left-nav-bar.service';
-import {LoginService} from '../../login/login.service';
+import {LoginService} from '../../login.service';
 
 @Component({
   selector: 'app-left-nav-bar',
@@ -23,6 +23,6 @@ export class LeftNavBarComponent implements OnInit, AfterViewInit {
   }
 
   getUserTypeId() {
-    return this.loginService.getUser().privilege_id;
+    return this.loginService.getUser() ? this.loginService.getUser().privilege_id : -2;
   }
 }

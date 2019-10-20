@@ -1,10 +1,9 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {environment} from 'src/environments/environment.prod';
-import {MiddlewareService} from '../middleware.service';
 import {Router} from '@angular/router';
-import {NotificationsService} from '../utils/notifications';
 import {Md5} from 'md5-typescript';
+import {NotificationsService} from './utils/notifications';
 
 @Injectable({
   providedIn: 'root'
@@ -12,10 +11,12 @@ import {Md5} from 'md5-typescript';
 
 export class LoginService {
 
-  constructor(private router: Router, private httpClient: HttpClient, private middlewareService: MiddlewareService,
+  constructor(private router: Router, private httpClient: HttpClient,
               private notifi: NotificationsService) {
     if (!this.isValidUser()) {
       this.logout();
+    } else {
+      this.notifi.success('Welcome ' + this.getUser().name);
     }
   }
 
@@ -63,7 +64,7 @@ export class LoginService {
 
   public logout() {
     localStorage.removeItem('oidfjntid');
-    this.router.navigate(['login']);
+    this.router.navigate(['app/login']);
   }
 
   public sessionTimeOutRedirectToLogin() {
@@ -86,7 +87,7 @@ export class LoginService {
     if (this.isTokenValid()) {
       return JSON.parse(localStorage.getItem('oidfjntid')).user[0];
     } else {
-      this.router.navigate(['login']);
+      // this.router.navigate(['app/login']);
       return null;
     }
   }
@@ -109,7 +110,9 @@ export class LoginService {
   }
 
   public routeToDefault() {
-    document.location.href = location.origin + '/' + this.defaultRutes[this.getUser().privilege_id];
+    this.router.navigate([this.defaultRutes[this.getUser().privilege_id]]);
+    this.notifi.success('Welcome ' + this.getUser().name);
+    // document.location.href = location.origin + '/' + this.defaultRutes[this.getUser().privilege_id];
   }
 
   private loginEndpoint(uname, pass) {

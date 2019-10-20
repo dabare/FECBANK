@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {environment} from 'src/environments/environment.prod';
 import {HttpClient} from '@angular/common/http';
-import {LoginService} from '../../../../login/login.service';
+import {LoginService} from '../../../../login.service';
 
 @Injectable({
   providedIn: 'root'

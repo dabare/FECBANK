@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
-import {LoginService} from '../../../login/login.service';
 import Swal from 'sweetalert2';
 import {UserService} from './user.service';
 import {NotificationsService} from '../../../utils/notifications';
+import {LoginService} from '../../../login.service';
 
 @Component({
   selector: 'app-user',

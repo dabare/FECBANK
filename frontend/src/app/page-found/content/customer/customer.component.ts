@@ -54,16 +54,16 @@ export class CustomerComponent implements OnInit, AfterViewInit {
               private notifi: NotificationsService, public financeService: FinanceService) {
   }
 
-  toggleHideAllMem(){
+  toggleHideAllMem() {
     this.hideAllMembers = !this.hideAllMembers;
   }
-  toggleHideMemPhoto(){
+  toggleHideMemPhoto() {
     this.hideMemPhoto = !this.hideMemPhoto;
   }
-  toggleHideSavingINfo(){
+  toggleHideSavingINfo() {
     this.hideSavingInfo = !this.hideSavingInfo;
   }
-  toggleHideLoanInfo(){
+  toggleHideLoanInfo() {
     this.hideLoanInfo = !this.hideLoanInfo;
   }
 
