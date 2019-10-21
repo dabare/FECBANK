@@ -38,11 +38,26 @@ export class FinanceService {
     return 'INVD' + id;
   }
 
+
   public getWithdrawCode(id) {
     while (id.length < 5) {
       id = '0' + id;
     }
     return 'INVW' + id;
+  }
+
+  public getBankBookSavingCode(id) {
+    while (id.length < 5) {
+      id = '0' + id;
+    }
+    return 'BINVD' + id;
+  }
+
+  public getBankBookWithdrawCode(id) {
+    while (id.length < 5) {
+      id = '0' + id;
+    }
+    return 'BINVW' + id;
   }
 
   public getLoanCode(id) {

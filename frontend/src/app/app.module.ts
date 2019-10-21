@@ -37,6 +37,7 @@ import {CustomerLoansComponent} from './page-found/content/tables/customer-loans
 import { GraphComponent } from './page-found/content/tables/graph/graph.component';
 import { GalleryComponent } from './page-found/content/tables/gallery/gallery.component';
 import {LoginComponent} from './page-found/content/login/login.component';
+import {BankBookComponent} from "./page-found/content/bank-book/bank-book.component";
 
 @NgModule({
   declarations: [
@@ -64,7 +65,8 @@ import {LoginComponent} from './page-found/content/login/login.component';
     CustomerLoanTimelineComponent,
     CustomerLoansComponent,
     GraphComponent,
-    GalleryComponent
+    GalleryComponent,
+    BankBookComponent
   ],
   imports: [
     BrowserModule,

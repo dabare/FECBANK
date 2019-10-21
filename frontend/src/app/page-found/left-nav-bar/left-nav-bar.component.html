@@ -21,6 +21,7 @@
         </a>
       </li>
 
+
       <div class="pcoded-navigation-label"></div>
 
       <li *ngIf="getUserTypeId() == 13 || getUserTypeId() == 3 || getUserTypeId() == 2" class="pcoded-hasmenu pcoded-trigger">
@@ -71,7 +72,20 @@
           </li>
         </ul>
       </li>
+
+      <div class="pcoded-navigation-label">Invesments</div>
+
+      <li *ngIf="getUserTypeId() == 13 || getUserTypeId() == 3 || getUserTypeId() == 1" id="bank-book" (click)="clickLink('#bank-book')" title="Bank Book">
+        <a [routerLink]="['./bank-book']">
+          <span class="pcoded-micon"><i class="fa fa-book"></i><b>A</b></span>
+          <span class="pcoded-mtext">Bank Book</span>
+          <span class="pcoded-mcaret"></span>
+        </a>
+      </li>
     </ul>
+
+
+
     <div class="pcoded-navigation-label">Settings</div>
     <ul class="pcoded-item pcoded-left-item">
 <!--      <li *ngIf="getUserTypeId() == 13 || getUserTypeId() == 3" id="users" (click)="clickLink('#users')" title="System User Management">-->

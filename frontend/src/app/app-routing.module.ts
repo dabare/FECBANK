@@ -10,6 +10,7 @@ import {CustomerComponent} from './page-found/content/customer/customer.componen
 import {SavingRateComponent} from './page-found/content/saving-rate/saving-rate.component';
 import {SavingsComponent} from './page-found/content/savings/savings.component';
 import {LoginComponent} from './page-found/content/login/login.component';
+import {BankBookComponent} from "./page-found/content/bank-book/bank-book.component";
 
 const routes: Routes = [
   {path: 'app',
@@ -25,6 +26,7 @@ const routes: Routes = [
       {path: 'loan-deposits', component: LoanDepositsComponent, canActivate: [AuthGuard] , data: { roles: ['13'] }},
       {path: 'saving-rate', component: SavingRateComponent, canActivate: [AuthGuard] , data: { roles: ['13'] }},
       {path: 'savings', component: SavingsComponent, canActivate: [AuthGuard] , data: { roles: ['13'] }},
+      {path: 'bank-book', component: BankBookComponent, canActivate: [AuthGuard] , data: { roles: ['13'] }},
       {path: 'login', component: LoginComponent},
     ]
   },

@@ -20,6 +20,7 @@ func main() {
 	initMemberSavingRate(router)
 	initMemberSaving(router)
 	initFileServer(router)
+	initBankBook(router)
 
 	log.Println("Running server on port" + port)
 	log.Fatal(http.ListenAndServe(port, router))
