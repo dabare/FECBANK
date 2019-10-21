@@ -10,7 +10,8 @@ import {CustomerComponent} from './page-found/content/customer/customer.componen
 import {SavingRateComponent} from './page-found/content/saving-rate/saving-rate.component';
 import {SavingsComponent} from './page-found/content/savings/savings.component';
 import {LoginComponent} from './page-found/content/login/login.component';
-import {BankBookComponent} from "./page-found/content/bank-book/bank-book.component";
+import {BankBookComponent} from './page-found/content/bank-book/bank-book.component';
+import {HomeComponent} from './page-found/content/home/home.component';
 
 const routes: Routes = [
   {path: 'app',
@@ -18,7 +19,7 @@ const routes: Routes = [
     // canActivate: [AuthGuard] ,
     // data: { roles: ['13', '1', '2', '3'] },
     children: [
-      {path: 'dashboard', component: CustomerComponent, canActivate: [AuthGuard] , data: { roles: ['13', '3'] }},
+      {path: 'dashboard', component: HomeComponent, canActivate: [AuthGuard] , data: { roles: ['13', '3'] }},
       {path: 'customer', component: CustomerComponent, canActivate: [AuthGuard] , data: { roles: ['13', '1', '2', '3'] }},
       {path: 'user', component: UserComponent, canActivate: [AuthGuard] , data: { roles: ['13', '1', '2', '3'] }},
       {path: 'system-settings', component: SystemSettingsComponent, canActivate: [AuthGuard] , data: { roles: ['13'] }},

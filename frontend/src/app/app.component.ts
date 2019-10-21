@@ -1,7 +1,4 @@
 import {Component, ViewChild } from '@angular/core';
-import {NgbTypeahead} from '@ng-bootstrap/ng-bootstrap';
-import {Observable, Subject, merge} from 'rxjs';
-import {debounceTime, distinctUntilChanged, filter, map} from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -10,5 +7,5 @@ import {debounceTime, distinctUntilChanged, filter, map} from 'rxjs/operators';
 })
 
 export class AppComponent {
-  title = 'Inventory ++';
+  title = 'FEC BANK';
 }
