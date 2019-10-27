@@ -34,15 +34,15 @@ export class HomeComponent implements OnInit, AfterViewInit {
     'bg-c-pink d-inline-block text-center',
     'bg-c-yellow d-inline-block text-center',
     'bg-c-green d-inline-block text-center',
-    'bg-c-red d-inline-block text-center'];
+    'bg-c-pink d-inline-block text-center'];
 
   barColour = [
     'progress-bar bg-c-blue',
     'progress-bar bg-c-pink',
     'progress-bar bg-c-yellow',
     'progress-bar bg-c-green',
-    'progress-bar bg-c-red',
-  ]
+    'progress-bar bg-c-pink',
+  ];
 
   ngOnInit() {
     this.getTop5Savers();
