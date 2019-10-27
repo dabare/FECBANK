@@ -31,11 +31,11 @@
 
             <div class="col-sm-7">
               <div class="pull-right input-group-sm ">
-                <button style="padding: 10px;" class="btn btn-info" (click)="refreshLoanDeposits()">
+                <button [disabled]="connected" style="padding: 10px;" class="btn btn-info" (click)="refreshLoanDeposits()">
                   <i class="icofont icofont-refresh" aria-hidden="true"></i> Refresh
                 </button>
                 &nbsp;
-                <button style="padding: 10px;" class="btn btn-success" (click)="clickNewLoanDeposit()">
+                <button [disabled]="connected" style="padding: 10px;" class="btn btn-success" (click)="clickNewLoanDeposit()">
                   <i class="icofont icofont-plus" aria-hidden="true"></i> New
                 </button>
               </div>
@@ -172,10 +172,10 @@
 
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-success" (click)="clickRegisterLoanDeposit()"
+            <button [disabled]="connected" type="submit" class="btn btn-success" (click)="clickRegisterLoanDeposit()"
                     *ngIf="actionMode=='new'">Register
             </button>
-            <button type="submit" class="btn btn-success" (click)="clickUpdateLoanDeposit()"
+            <button [disabled]="connected" type="submit" class="btn btn-success" (click)="clickUpdateLoanDeposit()"
                     *ngIf="actionMode=='edit'">Update
             </button>
           </div>

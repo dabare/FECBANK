@@ -31,6 +31,10 @@ export class SavingsComponent implements OnInit, AfterViewInit {
   totalCurrentWithdrawal = '0.00';
   totalAllWithdrawal = '0.00';
 
+
+  diffCurrent = '0.00';
+  diffAll = '0.00';
+
   actionMode = '';
 
   savings: any[] = [];
@@ -48,6 +52,8 @@ export class SavingsComponent implements OnInit, AfterViewInit {
   };
 
   members: any[] = [];
+
+  connected = true;
 
   constructor(private savingsService: SavingsService, private notifi: NotificationsService,
               public financeService: FinanceService, private leftNavBarService: LeftNavBarService) {
@@ -79,6 +85,7 @@ export class SavingsComponent implements OnInit, AfterViewInit {
   }
 
   clickRegisterSaving() {
+    this.connected = true;
     this.saving.req_date = this.saving.user_set_req_date.year + '-' + this.saving.user_set_req_date.month + '-'
       + this.saving.user_set_req_date.day;
     this.saving.amount = (Number(this.saving.amount) * 100) + '';
@@ -87,14 +94,17 @@ export class SavingsComponent implements OnInit, AfterViewInit {
         this.getAllSavings();
         this.notifi.success('Deposit inserted');
         $('#new_Saving').modal('hide');
+        this.connected = false;
       }, (err) => {
       this.saving.amount = (Number(this.saving.amount) / 100) + '';
       this.notifi.error('While inserting Deposit');
+      this.connected = false;
       }
     );
   }
 
   clickRegisterWithdrawal() {
+    this.connected = true;
     this.saving.req_date = this.saving.user_set_req_date.year + '-' + this.saving.user_set_req_date.month + '-'
       + this.saving.user_set_req_date.day;
     this.saving.amount = (Number(this.saving.amount) * 100) + '';
@@ -103,9 +113,11 @@ export class SavingsComponent implements OnInit, AfterViewInit {
         this.getAllSavings();
         this.notifi.success('Withdrawal inserted');
         $('#new_Saving').modal('hide');
+        this.connected = false;
       }, (err) => {
         this.saving.amount = (Number(this.saving.amount) / 100) + '';
         this.notifi.error('While inserting Withdrawal');
+        this.connected = false;
       }
     );
   }
@@ -113,7 +125,7 @@ export class SavingsComponent implements OnInit, AfterViewInit {
   getSum(arr, index, display) {
     let tot = 0;
     for (const x of display) {
-      tot += Number(arr[x][index]) * 100;
+      tot += Number(arr[x][index].split(',').join('')) * 100;
     }
     return this.financeService.cents2rupees(tot);
   }
@@ -137,6 +149,7 @@ export class SavingsComponent implements OnInit, AfterViewInit {
   }
 
   clickUpdateSaving() {
+    this.connected = true;
     this.saving.req_date = this.saving.user_set_req_date.year + '-' + this.saving.user_set_req_date.month + '-'
       + this.saving.user_set_req_date.day;
     this.saving.amount = (Number(this.saving.amount) * 100) + '';
@@ -145,14 +158,17 @@ export class SavingsComponent implements OnInit, AfterViewInit {
         this.getAllSavings();
         this.notifi.success('Deposit updated');
         $('#new_Saving').modal('hide');
+        this.connected = false;
       }, (err) => {
         this.saving.amount = (Number(this.saving.amount) / 100) + '';
         this.notifi.error('While updating Deposit');
+        this.connected = false;
       }
     );
   }
 
   clickUpdateWithdrawal() {
+    this.connected = true;
     this.saving.req_date = this.saving.user_set_req_date.year + '-' + this.saving.user_set_req_date.month + '-'
       + this.saving.user_set_req_date.day;
     this.saving.amount = (Number(this.saving.amount) * 100) + '';
@@ -161,9 +177,11 @@ export class SavingsComponent implements OnInit, AfterViewInit {
         this.getAllSavings();
         this.notifi.success('Withdrawal updated');
         $('#new_Saving').modal('hide');
+        this.connected = false;
       }, (err) => {
         this.saving.amount = (Number(this.saving.amount) / 100) + '';
         this.notifi.error('While updating Withdrawal');
+        this.connected = false;
       }
     );
   }
@@ -182,12 +200,15 @@ export class SavingsComponent implements OnInit, AfterViewInit {
     }).then(
       (willDelete) => {
         if (willDelete.value) {
+          this.connected = true;
           currentClass.saving.id = currentClass.savings[i].id;
           currentClass.savingsService.cancelMemberSaving(this.saving).subscribe((data: any) => {
               currentClass.getAllSavings();
               currentClass.notifi.success('Saving Cancelled');
+              this.connected = false;
             }, (err) => {
               currentClass.notifi.error('While Cancelling Saving');
+              this.connected = false;
             }
           );
         }
@@ -208,12 +229,15 @@ export class SavingsComponent implements OnInit, AfterViewInit {
     }).then(
       (willDelete) => {
         if (willDelete.value) {
+          this.connected = true;
           currentClass.saving.id = currentClass.savings[i].id;
           currentClass.savingsService.cancelMemberWithdraw(this.saving).subscribe((data: any) => {
               currentClass.getAllSavings();
               currentClass.notifi.success('Withdrawal Cancelled');
+              this.connected = false;
             }, (err) => {
               currentClass.notifi.error('While Cancelling Withdrawal');
+              this.connected = false;
             }
           );
         }
@@ -239,26 +263,32 @@ export class SavingsComponent implements OnInit, AfterViewInit {
   }
 
   getAllSavings() {
+    this.connected = true;
     this.savings = [];
     this.savingsService.getAllMemberSavings().subscribe((data: any) => {
         this.savings = data;
         this.financeService.addIndex(this.savings);
         this.drawTable();
+        this.connected = false;
       }, (err) => {
         this.notifi.error('While fetching Saving details');
         this.savingsDataTable.clear();
         this.savingsDataTable.draw();
+        this.connected = false;
       }
     );
   }
 
   getActiveMembers() {
+    this.connected = true;
     this.members = [];
     this.savingsService.getAllCustomers().subscribe((data: any) => {
         this.members = data;
         this.financeService.addIndex(this.members);
+        this.connected = false;
       }, (err) => {
         this.notifi.error('While fetching Member details');
+        this.connected = false;
       }
     );
   }
@@ -333,6 +363,10 @@ export class SavingsComponent implements OnInit, AfterViewInit {
           this.totalCurrentWithdrawal = this.getSum(data, 9, display.slice(start, end));
           this.totalAllDeposit = this.getSum(data, 8, display);
           this.totalAllWithdrawal = this.getSum(data, 9, display);
+          this.diffCurrent = this.financeService.cents2rupees(Number(this.totalCurrentDeposit) * 100 -
+            Number(this.totalCurrentWithdrawal) * 100);
+          this.diffAll = this.financeService.cents2rupees(Number(this.totalAllDeposit) * 100 -
+            Number(this.totalAllWithdrawal) * 100);
         }
       });
     }
@@ -391,8 +425,8 @@ export class SavingsComponent implements OnInit, AfterViewInit {
         '<button class="btn btn-mini btn-warning editSaving" > <i class="icofont icofont-edit-alt" aria-hidden="true"></i></button> ' +
         '<button class="btn btn-mini btn-danger deleteSaving"> <i class="icofont icofont-ui-delete" aria-hidden="true"></i></button>';
 
-      let withdrawal = this.financeService.cents2rupees(saving.amount);
-      let deposit = this.financeService.cents2rupees(saving.amount);
+      let withdrawal = this.financeService.toLocale(this.financeService.cents2rupees(saving.amount));
+      let deposit = this.financeService.toLocale(this.financeService.cents2rupees(saving.amount));
       let code = this.financeService.getSavingCode(saving.id);
       let status = 'Deposit';
       if (saving.trx_type === 'WITHDRAWAL') {
@@ -418,7 +452,7 @@ export class SavingsComponent implements OnInit, AfterViewInit {
 
 
       this.savingsDataTable.row.add([saving.index, code, memberID, saving.req_date,
-        this.financeService.cents2rupees(saving.amount), saving.note, status,
+        this.financeService.toLocale(this.financeService.cents2rupees(saving.amount)), saving.note, status,
         saving.updated_by, deposit, withdrawal, action]);
 
     }

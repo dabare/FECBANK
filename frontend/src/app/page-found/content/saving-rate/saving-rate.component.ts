@@ -37,6 +37,8 @@ export class SavingRateComponent implements OnInit, AfterViewInit {
     req_user: '-1'
   };
 
+  connected = true;
+
   constructor(private loansService: SavingRateService, private notifi: NotificationsService) {
   }
 
@@ -57,14 +59,17 @@ export class SavingRateComponent implements OnInit, AfterViewInit {
   }
 
   clickRegisterLoan() {
+    this.connected = true;
     this.loan.req_date = this.loan.user_set_req_date.year + '-' + this.loan.user_set_req_date.month + '-' + this.loan.user_set_req_date.day;
 
     this.loansService.insertMemberSavingRate(this.loan).subscribe((data: any) => {
         this.getAllLoans();
         this.notifi.success('Savings Rate saved');
         $('#new_Loan').modal('hide');
+        this.connected = false;
       }, (err) => {
         this.notifi.error('While inserting Savings Rate');
+        this.connected = false;
       }
     );
   }
@@ -93,14 +98,17 @@ export class SavingRateComponent implements OnInit, AfterViewInit {
   }
 
   clickUpdateLoan() {
+    this.connected = true;
     this.loan.req_date = this.loan.user_set_req_date.year + '-' + this.loan.user_set_req_date.month + '-' + this.loan.user_set_req_date.day;
 
     this.loansService.updateMemberSavingRate(this.loan).subscribe((data: any) => {
         this.getAllLoans();
         this.notifi.success('Savings Rate Updated');
         $('#new_Loan').modal('hide');
+        this.connected = false;
       }, (err) => {
         this.notifi.error('While Updating Savings Rate');
+        this.connected = false;
       }
     );
   }
@@ -119,12 +127,15 @@ export class SavingRateComponent implements OnInit, AfterViewInit {
     }).then(
       (willDelete) => {
         if (willDelete.value) {
+          this.connected = true;
           currentClass.loan.id = currentClass.loans[i].id;
           currentClass.loansService.cancelMemberSavingRate(this.loan).subscribe((data: any) => {
               currentClass.getAllLoans();
               currentClass.notifi.success('Savings Rate Cancelled');
+              this.connected = false;
             }, (err) => {
               currentClass.notifi.error('While Cancelling Savings Rate');
+              this.connected = false;
             }
           );
         }
@@ -149,15 +160,18 @@ export class SavingRateComponent implements OnInit, AfterViewInit {
   }
 
   getAllLoans() {
+    this.connected = true;
     this.loans = [];
     this.loansService.getAllMemberSavingRates().subscribe((data: any) => {
         this.loans = data;
         this.addIndex(this.loans);
         this.drawTable();
+        this.connected = false;
       }, (err) => {
         this.notifi.error('While fetching Savings Rate details');
         this.savingsRateDataTable.clear();
         this.savingsRateDataTable.draw();
+        this.connected = false;
       }
     );
   }

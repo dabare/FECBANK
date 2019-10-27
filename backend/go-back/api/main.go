@@ -21,6 +21,7 @@ func main() {
 	initMemberSaving(router)
 	initFileServer(router)
 	initBankBook(router)
+	initStatistics(router)
 
 	log.Println("Running server on port" + port)
 	log.Fatal(http.ListenAndServe(port, router))

@@ -26,6 +26,11 @@ export class BankBookService {
     return this.httpClient.post(environment.apiUrl + '/cancelBankBookSaving', data);
   }
 
+  cancelBankBookWithdrawal(data: any) {
+    data.req_user = this.loginService.getUser().id;
+    return this.httpClient.post(environment.apiUrl + '/cancelBankBookWithdrawal', data);
+  }
+
   updateBankBookSaving(data: any) {
     data.req_user = this.loginService.getUser().id;
     return this.httpClient.post(environment.apiUrl + '/updateBankBookSaving', data);

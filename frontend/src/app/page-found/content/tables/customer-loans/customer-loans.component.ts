@@ -63,6 +63,8 @@ export class CustomerLoansComponent implements OnInit, OnChanges {
     nextDueAmount: '',
   };
 
+  connected = true;
+
   constructor(private route: ActivatedRoute, private customerLoansService: CustomerLoansService, private notifi: NotificationsService,
               public financeService: FinanceService, private leftNavBarService: LeftNavBarService) {
   }
@@ -86,6 +88,7 @@ export class CustomerLoansComponent implements OnInit, OnChanges {
   }
 
   clickRegisterLoan() {
+    this.connected = true;
     this.loan.req_date = this.loan.user_set_req_date.year + '-' + this.loan.user_set_req_date.month + '-' + this.loan.user_set_req_date.day;
     this.loan.amount = (Number(this.loan.amount) * 100) + '';
     this.loan.charges = (Number(this.loan.charges) * 100) + '';
@@ -97,12 +100,14 @@ export class CustomerLoansComponent implements OnInit, OnChanges {
         this.getAllLoans();
         this.notifi.success('Loan inserted');
         $('#new_Loan').modal('hide');
+        this.connected = false;
       }, (err) => {
         this.loan.amount = (Number(this.loan.amount) / 100) + '';
         this.loan.charges = (Number(this.loan.charges) / 100) + '';
         this.loan.late_payment_charge = (Number(this.loan.late_payment_charge) / 100) + '';
         this.loan.reject_cheque_penalty = (Number(this.loan.reject_cheque_penalty) / 100) + '';
         this.notifi.error('While inserting Loan');
+        this.connected = false;
       }
     );
   }
@@ -145,6 +150,7 @@ export class CustomerLoansComponent implements OnInit, OnChanges {
   }
 
   clickUpdateLoan() {
+    this.connected = true;
     this.loan.req_date = this.loan.user_set_req_date.year + '-' + this.loan.user_set_req_date.month + '-' + this.loan.user_set_req_date.day;
     this.loan.amount = (Number(this.loan.amount) * 100) + '';
     this.loan.charges = (Number(this.loan.charges) * 100) + '';
@@ -156,12 +162,14 @@ export class CustomerLoansComponent implements OnInit, OnChanges {
         this.getAllLoans();
         this.notifi.success('Loan Updated');
         $('#new_Loan').modal('hide');
+        this.connected = false;
       }, (err) => {
         this.loan.amount = (Number(this.loan.amount) / 100) + '';
         this.loan.charges = (Number(this.loan.charges) / 100) + '';
         this.loan.late_payment_charge = (Number(this.loan.late_payment_charge) / 100) + '';
         this.loan.reject_cheque_penalty = (Number(this.loan.reject_cheque_penalty) / 100) + '';
         this.notifi.error('While Updating Loan');
+        this.connected = false;
       }
     );
   }
@@ -180,12 +188,15 @@ export class CustomerLoansComponent implements OnInit, OnChanges {
     }).then(
       (willDelete) => {
         if (willDelete.value) {
+          this.connected = true;
           currentClass.loan.id = currentClass.loans[i].id;
           currentClass.customerLoansService.deleteMemberLoan(this.loan).subscribe((data: any) => {
               currentClass.getAllLoans();
               currentClass.notifi.success('Loan Deleted');
+              this.connected = false;
             }, (err) => {
               currentClass.notifi.error('While Deleting Loan');
+              this.connected = false;
             }
           );
         }
@@ -259,16 +270,19 @@ export class CustomerLoansComponent implements OnInit, OnChanges {
   }
 
   getAllLoans() {
+    this.connected = true;
     this.loans = [];
     this.customerLoansService.getAllMemberLoansGivenMemberId(this.customerId).subscribe((data: any) => {
         this.loans = data;
         this.financeService.addIndex(this.loans);
         this.getLoanDetails();
         this.drawTable();
+        this.connected = false;
       }, (err) => {
         this.notifi.error('While fetching Loan details');
         this.loansDataTable.clear();
         this.loansDataTable.draw();
+        this.connected = false;
       }
     );
   }

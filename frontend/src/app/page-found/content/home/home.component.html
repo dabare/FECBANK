@@ -1,166 +1,329 @@
-<div class="row">
-  <div class="col-md-6 col-xl-3">
-    <div class="card bg-c-blue order-card">
-      <div class="card-block">
-        <h6 class="m-b-20">Orders Received</h6>
-        <h2 class="text-right"><i class="ti-shopping-cart f-left"></i><span>486</span></h2>
-        <p class="m-b-0">Completed Orders<span class="f-right">351</span></p>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-6 col-xl-3">
-    <div class="card bg-c-green order-card">
-      <div class="card-block">
-        <h6 class="m-b-20">Total Sales</h6>
-        <h2 class="text-right"><i class="ti-tag f-left"></i><span>1641</span></h2>
-        <p class="m-b-0">This Month<span class="f-right">213</span></p>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-6 col-xl-3">
-    <div class="card bg-c-yellow order-card">
-      <div class="card-block">
-        <h6 class="m-b-20">Revenue</h6>
-        <h2 class="text-right"><i class="ti-reload f-left"></i><span>$42,562</span></h2>
-        <p class="m-b-0">This Month<span class="f-right">$5,032</span></p>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-6 col-xl-3">
-    <div class="card bg-c-pink order-card">
-      <div class="card-block">
-        <h6 class="m-b-20">Total Profit</h6>
-        <h2 class="text-right"><i class="ti-wallet f-left"></i><span>$9,562</span></h2>
-        <p class="m-b-0">This Month<span class="f-right">$542</span></p>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-6 col-xl-4">
-    <div class="card widget-statstic-card borderless-card">
-      <div class="card-header">
-        <div class="card-header-left">
-          <h5>Daily order</h5>
-          <p class="p-t-10 m-b-0 text-muted">Compare to yesterday</p>
+<div class="row col-sm-12">
+  <div class="row col-sm-6">
+    <div class="col-sm-6">
+      <div class="card widget-statstic-card borderless-card">
+        <div class="card-header">
+          <div class="card-header-left">
+            <h5>All Members</h5>
+            <!--            <p class="p-t-10 m-b-0 text-muted">Compare to yesterday</p>-->
+          </div>
         </div>
-      </div>
-      <div class="card-block">
-        <i class="fa fa-users st-icon bg-warning txt-lite-color"></i>
-        <div class="text-left">
-          <h3 class="d-inline-block">600</h3>
-          <i class="fa fa-long-arrow-down text-danger f-24 m-l-15"></i>
-          <span class="f-right bg-danger">-5%</span>
+        <div class="card-block">
+          <i class="fa fa-users st-icon bg-warning txt-lite-color"></i>
+          <div class="text-left">
+            <h3 class="d-inline-block">{{allMembers}}</h3>
+            <!--            <i class="fa fa-long-arrow-down text-danger f-24 m-l-15"></i>-->
+            <!--            <span class="f-right bg-danger">-5%</span>-->
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="col-md-12 col-xl-5 ">
-    <div class="card project-task">
-      <div class="card-header">
-        <div class="card-header-left ">
-          <h5>Audience By Country</h5>
+    <div class="col-sm-6">
+      <div class="card widget-statstic-card borderless-card">
+        <div class="card-header">
+          <div class="card-header-left">
+            <h5>Total Savings</h5>
+            <!--            <p class="p-t-10 m-b-0 text-muted">Compare to yesterday</p>-->
+          </div>
         </div>
-      </div>
-      <div class="card-block p-b-10">
-        <div class="table-responsive">
-          <table class="table table-hover">
-            <thead>
-            <tr>
-              <th>Country</th>
-              <th>Statistic</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-              <td>
-                <div class="task-contain">
-                  <h6 class="bg-c-blue d-inline-block text-center">IN</h6>
-                  <p class="d-inline-block m-l-20">India</p>
-                </div>
-              </td>
-              <td>
-                <p class="d-inline-block m-r-20">80%</p>
-                <div class="progress d-inline-block">
-                  <div class="progress-bar bg-c-blue" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width:80%">
-                  </div>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <div class="task-contain">
-                  <h6 class="bg-c-pink d-inline-block text-center">NY</h6>
-                  <p class="d-inline-block m-l-20">New York</p>
-                </div>
-              </td>
-              <td>
-                <p class="d-inline-block m-r-20">60%</p>
-                <div class="progress d-inline-block">
-                  <div class="progress-bar bg-c-pink" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width:60%">
-                  </div>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <div class="task-contain">
-                  <h6 class="bg-c-yellow d-inline-block text-center">UK</h6>
-                  <p class="d-inline-block m-l-20">England</p>
-                </div>
-              </td>
-              <td>
-                <p class="d-inline-block m-r-20">50%</p>
-                <div class="progress d-inline-block">
-                  <div class="progress-bar bg-c-yellow" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width:50%">
-                  </div>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <div class="task-contain">
-                  <h6 class="bg-c-green d-inline-block text-center">BZ</h6>
-                  <p class="d-inline-block m-l-20">Brazil</p>
-                </div>
-              </td>
-              <td>
-                <p class="d-inline-block m-r-20">20%</p>
-                <div class="progress d-inline-block">
-                  <div class="progress-bar bg-c-green" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width:20%">
-                  </div>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <div class="task-contain">
-                  <h6 class="bg-c-blue d-inline-block text-center">SA</h6>
-                  <p class="d-inline-block m-l-20">Africa</p>
-                </div>
-              </td>
-              <td>
-                <p class="d-inline-block m-r-20">50%</p>
-                <div class="progress d-inline-block">
-                  <div class="progress-bar bg-c-blue" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width:50%">
-                  </div>
-                </div>
-              </td>
-            </tr>
-            </tbody>
-          </table>
+        <div class="card-block">
+          <i class="fa fa-download st-icon bg-success txt-lite-color"></i>
+          <div class="text-left">
+            <h3 class="d-inline-block">Rs. {{financeService.toLocale(financeService.cents2rupees(totalSavings))}}/=</h3>
+            <!--            <i class="fa fa-long-arrow-down text-danger f-24 m-l-15"></i>-->
+            <!--            <span class="f-right bg-danger">-5%</span>-->
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="col-md-6 col-xl-3">
-    <div class="card bg-c-green amount-card"><iframe class="chartjs-hidden-iframe" tabindex="-1" style="display: block; overflow: hidden; border: 0px; margin: 0px; top: 0px; left: 0px; bottom: 0px; right: 0px; height: 100%; width: 100%; position: absolute; pointer-events: none; z-index: -1;"></iframe>
-      <div class="card-block">
-        <i class="ti-arrow-down"></i>
-        <h4>$387.00</h4>
+    <div class="col-sm-6">
+      <div class="card widget-statstic-card borderless-card">
+        <div class="card-header">
+          <div class="card-header-left">
+            <h5>In Bank Book</h5>
+            <!--            <p class="p-t-10 m-b-0 text-muted">Compare to yesterday</p>-->
+          </div>
+        </div>
+        <div class="card-block">
+          <i class="fa fa-bank st-icon bg-info txt-lite-color"></i>
+          <div class="text-left">
+            <h3 class="d-inline-block">Rs. {{financeService.toLocale(financeService.cents2rupees(totalInBank))}}/=</h3>
+            <!--            <i class="fa fa-long-arrow-down text-danger f-24 m-l-15"></i>-->
+            <!--            <span class="f-right bg-danger">-5%</span>-->
+          </div>
+        </div>
       </div>
-      <canvas id="amunt-card2" width="237" height="118" style="display: block; width: 237px; height: 118px;"></canvas>
-      <p>Balance</p>
+    </div>
+
+
+    <div class="col-sm-6">
+      <div class="card widget-statstic-card borderless-card">
+        <div class="card-header">
+          <div class="card-header-left">
+            <h5>In Hand</h5>
+            <!--            <p class="p-t-10 m-b-0 text-muted">Compare to yesterday</p>-->
+          </div>
+        </div>
+        <div class="card-block">
+          <i class="fa fa-money-bill st-icon bg-danger txt-lite-color"></i>
+          <div class="text-left">
+            <h3 class="d-inline-block">Rs. {{financeService.toLocale(financeService.cents2rupees(totalInHand))}}/=</h3>
+            <!--            <i class="fa fa-long-arrow-down text-danger f-24 m-l-15"></i>-->
+            <!--            <span class="f-right bg-danger">-5%</span>-->
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+
+
+
+  </div>
+  <div class="row col-sm-6">
+    <div class="col-sm-12">
+      <div class="card project-task">
+        <div class="card-header">
+          <div class="card-header-left ">
+            <h5>Top 5 Savers</h5>
+          </div>
+        </div>
+        <div class="card-block p-b-10">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+              <tr>
+                <th>Member</th>
+                <th>Share</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let mem of top5Savers; let i = index">
+                <td>
+                  <div class="task-contain">
+                    <h6 [className]="circleColors[i]">{{getTwoLetters(mem.name)}}</h6>
+                    <p class="d-inline-block m-l-20">{{mem.name}}</p>
+                  </div>
+                </td>
+                <td>
+                  <p class="d-inline-block m-r-20">{{getMemberSharePersantafe(mem.amount) | number : '1.2-2'}}%</p>
+                  <div class="progress d-inline-block">
+                    <div [className]="barColour[i]" role="progressbar" aria-valuemin="0" aria-valuemax="100" [style.width.%]="getMemberSharePersantafe(mem.amount)">
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
+
+
+
+<!--<div class="col-sm-12">-->
+<!--  <div class="card ">-->
+<!--    <div class="card-header ">-->
+<!--      <div class="card-header-left ">-->
+<!--        <h5>Latest Comments</h5>-->
+<!--      </div>-->
+<!--      <div class="card-header-right">-->
+<!--        <ul class="list-unstyled card-option">-->
+<!--          <li><i class="icofont icofont-simple-left "></i></li>-->
+<!--          <li><i class="icofont icofont-maximize full-card"></i></li>-->
+<!--          <li><i class="icofont icofont-minus minimize-card"></i></li>-->
+<!--          <li><i class="icofont icofont-refresh reload-card"></i></li>-->
+<!--          <li><i class="icofont icofont-error close-card"></i></li>-->
+<!--        </ul>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--    <div class="card-block ">-->
+<!--      <div class="card-comment ">-->
+<!--        <div class="card-block-small">-->
+<!--          <img class="img-radius" src="../files/assets/images/avatar-4.jpg" alt="user-1">-->
+<!--          <div class="comment-desc">-->
+<!--            <h6>Luciano Durk</h6>-->
+<!--            <p class="text-muted ">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>-->
+<!--            <div class="comment-btn">-->
+<!--              <button class="btn bg-c-blue btn-round btn-comment ">Action</button>-->
+<!--            </div>-->
+<!--            <div class="date">-->
+<!--              <i>04 October 2015</i>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--      <div class="card-comment ">-->
+<!--        <div class="card-block-small">-->
+<!--          <img class="img-radius" src="../files/assets/images/avatar-2.jpg" alt="user-4">-->
+<!--          <div class="comment-desc">-->
+<!--            <h6>John Doe</h6>-->
+<!--            <p class="text-muted ">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>-->
+<!--            <div class="comment-btn">-->
+<!--              <button class="btn bg-c-pink btn-round btn-comment ">Approved</button>-->
+<!--            </div>-->
+<!--            <div class="date">-->
+<!--              <i>16 December 2015</i>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--      <div class="card-comment ">-->
+<!--        <div class="card-block-small">-->
+<!--          <img class="img-radius" src="../files/assets/images/avatar-3.jpg" alt="user-2">-->
+<!--          <div class="comment-desc">-->
+<!--            <h6>Planner Board</h6>-->
+<!--            <p class="text-muted ">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>-->
+<!--            <div class="comment-btn">-->
+<!--              <button class="btn bg-c-green btn-round btn-comment ">Rejected</button>-->
+<!--            </div>-->
+<!--            <div class="date">-->
+<!--              <i>12 Saptember 2015</i>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->
+
+<!--<div class="col-sm-6">-->
+<!--  <div class="card bg-c-blue order-card">-->
+<!--    <div class="card-block">-->
+<!--      <h6 class="m-b-20">Orders Received</h6>-->
+<!--      <h2 class="text-right"><i class="ti-shopping-cart f-left"></i><span>486</span></h2>-->
+<!--      <p class="m-b-0">Completed Orders<span class="f-right">351</span></p>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->
+<!--<div class="col-sm-6">-->
+<!--  <div class="card bg-c-green order-card">-->
+<!--    <div class="card-block">-->
+<!--      <h6 class="m-b-20">Total Sales</h6>-->
+<!--      <h2 class="text-right"><i class="ti-tag f-left"></i><span>1641</span></h2>-->
+<!--      <p class="m-b-0">This Month<span class="f-right">213</span></p>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->
+<!--<div class="col-sm-6">-->
+<!--  <div class="card bg-c-yellow order-card">-->
+<!--    <div class="card-block">-->
+<!--      <h6 class="m-b-20">Revenue</h6>-->
+<!--      <h2 class="text-right"><i class="ti-reload f-left"></i><span>$42,562</span></h2>-->
+<!--      <p class="m-b-0">This Month<span class="f-right">$5,032</span></p>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->
+<!--<div class="col-sm-6">-->
+<!--  <div class="card bg-c-pink order-card">-->
+<!--    <div class="card-block">-->
+<!--      <h6 class="m-b-20">Total Profit</h6>-->
+<!--      <h2 class="text-right"><i class="ti-wallet f-left"></i><span>$9,562</span></h2>-->
+<!--      <p class="m-b-0">This Month<span class="f-right">$542</span></p>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->
+<!--<div class="col-sm-12">-->
+<!--  <div class="card project-task">-->
+<!--    <div class="card-header">-->
+<!--      <div class="card-header-left ">-->
+<!--        <h5>Top 5 Savers</h5>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--    <div class="card-block p-b-10">-->
+<!--      <div class="table-responsive">-->
+<!--        <table class="table table-hover">-->
+<!--          <thead>-->
+<!--          <tr>-->
+<!--            <th>Country</th>-->
+<!--            <th>Statistic</th>-->
+<!--          </tr>-->
+<!--          </thead>-->
+<!--          <tbody>-->
+<!--          <tr>-->
+<!--            <td>-->
+<!--              <div class="task-contain">-->
+<!--                <h6 class="bg-c-blue d-inline-block text-center">IN</h6>-->
+<!--                <p class="d-inline-block m-l-20">India</p>-->
+<!--              </div>-->
+<!--            </td>-->
+<!--            <td>-->
+<!--              <p class="d-inline-block m-r-20">80%</p>-->
+<!--              <div class="progress d-inline-block">-->
+<!--                <div class="progress-bar bg-c-blue" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width:80%">-->
+<!--                </div>-->
+<!--              </div>-->
+<!--            </td>-->
+<!--          </tr>-->
+<!--          <tr>-->
+<!--            <td>-->
+<!--              <div class="task-contain">-->
+<!--                <h6 class="bg-c-pink d-inline-block text-center">NY</h6>-->
+<!--                <p class="d-inline-block m-l-20">New York</p>-->
+<!--              </div>-->
+<!--            </td>-->
+<!--            <td>-->
+<!--              <p class="d-inline-block m-r-20">60%</p>-->
+<!--              <div class="progress d-inline-block">-->
+<!--                <div class="progress-bar bg-c-pink" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width:60%">-->
+<!--                </div>-->
+<!--              </div>-->
+<!--            </td>-->
+<!--          </tr>-->
+<!--          <tr>-->
+<!--            <td>-->
+<!--              <div class="task-contain">-->
+<!--                <h6 class="bg-c-yellow d-inline-block text-center">UK</h6>-->
+<!--                <p class="d-inline-block m-l-20">England</p>-->
+<!--              </div>-->
+<!--            </td>-->
+<!--            <td>-->
+<!--              <p class="d-inline-block m-r-20">50%</p>-->
+<!--              <div class="progress d-inline-block">-->
+<!--                <div class="progress-bar bg-c-yellow" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width:50%">-->
+<!--                </div>-->
+<!--              </div>-->
+<!--            </td>-->
+<!--          </tr>-->
+<!--          <tr>-->
+<!--            <td>-->
+<!--              <div class="task-contain">-->
+<!--                <h6 class="bg-c-green d-inline-block text-center">BZ</h6>-->
+<!--                <p class="d-inline-block m-l-20">Brazil</p>-->
+<!--              </div>-->
+<!--            </td>-->
+<!--            <td>-->
+<!--              <p class="d-inline-block m-r-20">20%</p>-->
+<!--              <div class="progress d-inline-block">-->
+<!--                <div class="progress-bar bg-c-green" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width:20%">-->
+<!--                </div>-->
+<!--              </div>-->
+<!--            </td>-->
+<!--          </tr>-->
+<!--          <tr>-->
+<!--            <td>-->
+<!--              <div class="task-contain">-->
+<!--                <h6 class="bg-c-blue d-inline-block text-center">SA</h6>-->
+<!--                <p class="d-inline-block m-l-20">Africa</p>-->
+<!--              </div>-->
+<!--            </td>-->
+<!--            <td>-->
+<!--              <p class="d-inline-block m-r-20">50%</p>-->
+<!--              <div class="progress d-inline-block">-->
+<!--                <div class="progress-bar bg-c-blue" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width:50%">-->
+<!--                </div>-->
+<!--              </div>-->
+<!--            </td>-->
+<!--          </tr>-->
+<!--          </tbody>-->
+<!--        </table>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->

@@ -8,31 +8,15 @@ import {LoginService} from '../../../login.service';
 })
 
 export class HomeService {
-
-  constructor(private httpClient: HttpClient, private loginService: LoginService) {
+  constructor(private httpClient: HttpClient) {
   }
 
-  getAllCustomers() {
-    return this.httpClient.post(environment.apiUrl + '/viewAllMembers', {});
+  getStatistics() {
+    return this.httpClient.post(environment.apiUrl + '/getStatistics', {});
   }
 
-  insertCustomer(customer: any) {
-    customer.req_user = this.loginService.getUser().id;
-    return this.httpClient.post(environment.apiUrl + '/insertMember', customer);
-  }
-
-  updateCustomer(customer: any) {
-    customer.req_user = this.loginService.getUser().id;
-    return this.httpClient.post(environment.apiUrl + '/updateMember', customer);
-  }
-
-  deleteCustomer(customer: any) {
-    customer.req_user = this.loginService.getUser().id;
-    return this.httpClient.post(environment.apiUrl + '/deleteMember', customer);
-  }
-
-  getCustomerSavingHistory(customer: any) {
-    return this.httpClient.post(environment.apiUrl + '/viewMemberSavingHistory', customer);
+  getTop5Savers() {
+    return this.httpClient.post(environment.apiUrl + '/getTop5Savers', {});
   }
 
 }

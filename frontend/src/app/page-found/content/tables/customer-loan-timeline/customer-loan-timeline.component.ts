@@ -73,6 +73,8 @@ export class CustomerLoanTimelineComponent implements OnChanges {
   customerLoanTimelineDatatableSearch = '';
   customerLoanTimelineDatatable: any;
 
+  connected = true;
+
   constructor(public financeService: FinanceService,
               private customerLoanTimelineService: CustomerLoanTimelineService,
               private notifi: NotificationsService) {
@@ -85,6 +87,7 @@ export class CustomerLoanTimelineComponent implements OnChanges {
   }
 
   getInfoLoan() {
+    this.connected = true;
     this.actionMode = 'info';
     this.deposits = [];
     this.customerLoanTimelineService.getDepositsOfLoan(this.loan).subscribe((data: any) => {
@@ -96,8 +99,10 @@ export class CustomerLoanTimelineComponent implements OnChanges {
           Number(this.loan.total) * 100,
           0);
         this.drawTable();
+        this.connected = false;
       }, (err) => {
         this.notifi.error('While fetching data');
+        this.connected = false;
       }
     );
   }
@@ -115,12 +120,15 @@ export class CustomerLoanTimelineComponent implements OnChanges {
     }).then(
       (willDelete) => {
         if (willDelete.value) {
+          this.connected = true;
           currentClass.loanDeposit.id = currentClass.deposits[i - 1].id;
           currentClass.customerLoanTimelineService.cancelMemberLoanDeposit(this.loanDeposit).subscribe((data: any) => {
               currentClass.getInfoLoan();
               currentClass.notifi.success('Deposit Cancelled');
+              this.connected = false;
             }, (err) => {
               currentClass.notifi.error('While Cancelling Deposit');
+              this.connected = false;
             }
           );
         }
@@ -140,12 +148,15 @@ export class CustomerLoanTimelineComponent implements OnChanges {
     }).then(
       (willDelete) => {
         if (willDelete.value) {
+          this.connected = true;
           currentClass.customerLoanTimelineService.completeMemberLoanDeposit(this.loan).subscribe((data: any) => {
               currentClass.getInfoLoan();
               currentClass.loan.status = '2';
               currentClass.notifi.success('Loan Completed');
+              this.connected = false;
             }, (err) => {
               currentClass.notifi.error('While Updating Loan');
+              this.connected = false;
             }
           );
         }
@@ -172,6 +183,7 @@ export class CustomerLoanTimelineComponent implements OnChanges {
   }
 
   clickRegisterLoanDeposit() {
+    this.connected = true;
     this.loanDeposit.req_date = this.loanDeposit.user_set_req_date.year + '-' + this.loanDeposit.user_set_req_date.month + '-'
       + this.loanDeposit.user_set_req_date.day;
     this.loanDeposit.amount = (Number(this.loanDeposit.amount) * 100) + '';
@@ -180,9 +192,11 @@ export class CustomerLoanTimelineComponent implements OnChanges {
         this.getInfoLoan();
         this.notifi.success('Deposit inserted');
         $('#new_LoanDeposit').modal('hide');
+        this.connected = false;
       }, (err) => {
         this.loanDeposit.amount = (Number(this.loanDeposit.amount) / 100) + '';
         this.notifi.error('While inserting Deposit');
+        this.connected = false;
       }
     );
   }

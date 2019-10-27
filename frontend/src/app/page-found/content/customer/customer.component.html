@@ -41,11 +41,11 @@
 
               <div class="col-sm-7">
                 <div class="pull-right input-group-sm ">
-                  <button style="padding: 10px;" class="btn btn-info" (click)="refreshCustomers()">
+                  <button [disabled]="connected" style="padding: 10px;" class="btn btn-info" (click)="refreshCustomers()">
                     <i class="icofont icofont-refresh" aria-hidden="true"></i> Refresh
                   </button>
                   &nbsp;
-                  <button style="padding: 10px;" class="btn btn-success" (click)="clickNewCustomer()">
+                  <button [disabled]="connected" style="padding: 10px;" class="btn btn-success" (click)="clickNewCustomer()">
                     <i class="icofont icofont-plus" aria-hidden="true"></i> New
                   </button>
                 </div>
@@ -287,10 +287,10 @@
 
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-success" (click)="clickRegisterCustomer()"
+            <button [disabled]="connected" type="submit" class="btn btn-success" (click)="clickRegisterCustomer()"
                     *ngIf="actionMode=='new'">Register
             </button>
-            <button type="submit" class="btn btn-success" (click)="clickUpdateCustomer()"
+            <button [disabled]="connected" type="submit" class="btn btn-success" (click)="clickUpdateCustomer()"
                     *ngIf="actionMode=='edit'">Update
             </button>
           </div>

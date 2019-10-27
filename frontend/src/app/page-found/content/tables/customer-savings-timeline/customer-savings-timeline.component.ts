@@ -56,6 +56,8 @@ export class CustomerSavingsTimelineComponent implements OnChanges {
   @Input()
   customerName: string;
 
+  connected = true;
+
   constructor(public financeService: FinanceService,
               private customerSavingsTimelineService: CustomerSavingsTimelineService,
               private notifi: NotificationsService) {
@@ -69,14 +71,17 @@ export class CustomerSavingsTimelineComponent implements OnChanges {
   }
 
   getInfoCustomer() {
+    this.connected = true;
     this.savingHistory = [];
     this.customerSavingsTimelineDatatableSearch = '';
     this.customerSavingsTimelineService.getCustomerSavingHistory(this.customer).subscribe((data: any) => {
         this.savingHistory = this.financeService.processSavingHistory(data);
         this.financeService.addIndex(this.savingHistory);
         this.drawTable();
+        this.connected = false;
       }, (err) => {
         this.notifi.error('While fetching Member History');
+        this.connected = false;
       }
     );
   }
@@ -112,6 +117,7 @@ export class CustomerSavingsTimelineComponent implements OnChanges {
   }
 
   clickRegisterSaving() {
+    this.connected = true;
     this.saving.req_date = this.saving.user_set_req_date.year + '-' + this.saving.user_set_req_date.month + '-'
       + this.saving.user_set_req_date.day;
     this.saving.amount = (Number(this.saving.amount) * 100) + '';
@@ -120,14 +126,17 @@ export class CustomerSavingsTimelineComponent implements OnChanges {
         this.getInfoCustomer();
         this.notifi.success('Deposit inserted');
         $('#new_Saving').modal('hide');
+        this.connected = false;
       }, (err) => {
         this.saving.amount = (Number(this.saving.amount) / 100) + '';
         this.notifi.error('While inserting Deposit');
+        this.connected = false;
       }
     );
   }
 
   clickRegisterWithdrawal() {
+    this.connected = true;
     this.saving.req_date = this.saving.user_set_req_date.year + '-' + this.saving.user_set_req_date.month + '-'
       + this.saving.user_set_req_date.day;
     this.saving.amount = (Number(this.saving.amount) * 100) + '';
@@ -136,14 +145,17 @@ export class CustomerSavingsTimelineComponent implements OnChanges {
         this.getInfoCustomer();
         this.notifi.success('Withdrawal inserted');
         $('#new_Saving').modal('hide');
+        this.connected = false;
       }, (err) => {
         this.saving.amount = (Number(this.saving.amount) / 100) + '';
         this.notifi.error('While inserting Withdrawal');
+        this.connected = false;
       }
     );
   }
 
   clickUpdateSaving() {
+    this.connected = true;
     this.saving.req_date = this.saving.user_set_req_date.year + '-' + this.saving.user_set_req_date.month + '-'
       + this.saving.user_set_req_date.day;
     this.saving.amount = (Number(this.saving.amount) * 100) + '';
@@ -152,14 +164,17 @@ export class CustomerSavingsTimelineComponent implements OnChanges {
         this.getInfoCustomer();
         this.notifi.success('Deposit updated');
         $('#new_Saving').modal('hide');
+        this.connected = false;
       }, (err) => {
         this.saving.amount = (Number(this.saving.amount) / 100) + '';
         this.notifi.error('While updating Deposit');
+        this.connected = false;
       }
     );
   }
 
   clickUpdateWithdrawal() {
+    this.connected = true;
     this.saving.req_date = this.saving.user_set_req_date.year + '-' + this.saving.user_set_req_date.month + '-'
       + this.saving.user_set_req_date.day;
     this.saving.amount = (Number(this.saving.amount) * 100) + '';
@@ -168,9 +183,11 @@ export class CustomerSavingsTimelineComponent implements OnChanges {
         this.getInfoCustomer();
         this.notifi.success('Withdrawal updated');
         $('#new_Saving').modal('hide');
+        this.connected = false;
       }, (err) => {
         this.saving.amount = (Number(this.saving.amount) / 100) + '';
         this.notifi.error('While updating Withdrawal');
+        this.connected = false;
       }
     );
   }
@@ -189,12 +206,15 @@ export class CustomerSavingsTimelineComponent implements OnChanges {
     }).then(
       (willDelete) => {
         if (willDelete.value) {
+          this.connected = true;
           currentClass.saving.id = currentClass.savingHistory[i - 1].id;
           currentClass.customerSavingsTimelineService.cancelMemberSaving(this.saving).subscribe((data: any) => {
               currentClass.getInfoCustomer();
               currentClass.notifi.success('Saving Cancelled');
+              this.connected = false;
             }, (err) => {
               currentClass.notifi.error('While Cancelling Saving');
+              this.connected = false;
             }
           );
         }
@@ -215,12 +235,15 @@ export class CustomerSavingsTimelineComponent implements OnChanges {
     }).then(
       (willDelete) => {
         if (willDelete.value) {
+          this.connected = true;
           currentClass.saving.id = currentClass.savingHistory[i - 1].id;
           currentClass.customerSavingsTimelineService.cancelMemberWithdraw(this.saving).subscribe((data: any) => {
               currentClass.getInfoCustomer();
               currentClass.notifi.success('Withdrawal Cancelled');
+              this.connected = false;
             }, (err) => {
               currentClass.notifi.error('While Cancelling Withdrawal');
+              this.connected = false;
             }
           );
         }

@@ -10,6 +10,7 @@ func initBankBook(router *mux.Router) {
 	router.HandleFunc("/api/insertBankBookSaving", insertBankBookSaving).Methods("POST", "OPTIONS")
 	router.HandleFunc("/api/cancelBankBookSaving", cancelBankBookSaving).Methods("POST", "OPTIONS")
 	router.HandleFunc("/api/updateBankBookSaving", updateBankBookSaving).Methods("POST", "OPTIONS")
+	router.HandleFunc("/api/cancelBankBookWithdrawal", cancelBankBookWithdrawal).Methods("POST", "OPTIONS")
 }
 
 func viewAllBankBookSavings(w http.ResponseWriter, r *http.Request) {
@@ -27,7 +28,11 @@ func insertBankBookSaving(w http.ResponseWriter, r *http.Request) {
 }
 
 func cancelBankBookSaving(w http.ResponseWriter, r *http.Request) {
-	execute(w, r, `UPDATE `+userDbReplaceStr+`.bank_book_ledger SET status=4, req_user=:req_user where id=(:id)`)
+	execute(w, r, `UPDATE `+userDbReplaceStr+`.bank_book_ledger SET status=11, req_user=:req_user where id=(:id)`)
+}
+
+func cancelBankBookWithdrawal(w http.ResponseWriter, r *http.Request) {
+	execute(w, r, `UPDATE `+userDbReplaceStr+`.bank_book_ledger SET status=12, req_user=:req_user where id=(:id)`)
 }
 
 func updateBankBookSaving(w http.ResponseWriter, r *http.Request) {

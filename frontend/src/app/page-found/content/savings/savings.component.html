@@ -31,15 +31,15 @@
 
             <div class="col-sm-7">
               <div class="pull-right input-group-sm ">
-                <button style="padding: 10px;" class="btn btn-info" (click)="refreshSavings()">
+                <button [disabled]="connected" style="padding: 10px;" class="btn btn-info" (click)="refreshSavings()">
                   <i class="icofont icofont-refresh" aria-hidden="true"></i> Refresh
                 </button>
                 &nbsp;
-                <button style="padding: 10px;" class="btn btn-success" (click)="clickNewSaving()">
+                <button [disabled]="connected" style="padding: 10px;" class="btn btn-success" (click)="clickNewSaving()">
                   <i class="icofont icofont-plus" aria-hidden="true"></i> Deposit
                 </button>
                 &nbsp;
-                <button style="padding: 10px;" class="btn btn-success" (click)="clickNewWithdrawal()">
+                <button [disabled]="connected" style="padding: 10px;" class="btn btn-success" (click)="clickNewWithdrawal()">
                   <i class="icofont icofont-plus" aria-hidden="true"></i> Withdrawal
                 </button>
               </div>
@@ -83,16 +83,16 @@
                   </tr>
                   <tr>
                     <th style="text-align:right" colspan="8">Total Current Page:</th>
-                    <th style="text-align:right">{{totalCurrentDeposit}}</th>
-                    <th style="text-align:right">{{totalCurrentWithdrawal}}</th>
-                    <th style="text-align:right">{{financeService.cents2rupees(((totalCurrentDeposit | number) - (totalCurrentWithdrawal | number)) * 100 )}}</th>
+                    <th style="text-align:right">{{financeService.toLocale(totalCurrentDeposit)}}</th>
+                    <th style="text-align:right">{{financeService.toLocale(totalCurrentWithdrawal)}}</th>
+                    <th style="text-align:right">{{financeService.toLocale(diffCurrent)}}</th>
                   </tr>
 
                   <tr>
                     <th style="text-align:right" colspan="8">Total All:</th>
-                    <th style="text-align:right">{{totalAllDeposit}}</th>
-                    <th style="text-align:right">{{totalAllWithdrawal}}</th>
-                    <th style="text-align:right">{{financeService.cents2rupees(((totalAllDeposit | number) - (totalAllWithdrawal | number)) * 100 )}}</th>
+                    <th style="text-align:right">{{financeService.toLocale(totalAllDeposit)}}</th>
+                    <th style="text-align:right">{{financeService.toLocale(totalAllWithdrawal)}}</th>
+                    <th style="text-align:right">{{financeService.toLocale(diffAll)}}</th>
                   </tr>
 
                   </tfoot>
@@ -195,18 +195,18 @@
 
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-success" (click)="clickRegisterSaving()"
+            <button [disabled]="connected" type="submit" class="btn btn-success" (click)="clickRegisterSaving()"
                     *ngIf="actionMode=='new' && saving.trx_type=='DEPOSIT'">Register
             </button>
-            <button type="submit" class="btn btn-success" (click)="clickRegisterWithdrawal()"
+            <button [disabled]="connected" type="submit" class="btn btn-success" (click)="clickRegisterWithdrawal()"
                     *ngIf="actionMode=='new' && saving.trx_type=='WITHDRAWAL'">Register
             </button>
 
 
-            <button type="submit" class="btn btn-success" (click)="clickUpdateSaving()"
+            <button [disabled]="connected" type="submit" class="btn btn-success" (click)="clickUpdateSaving()"
                     *ngIf="actionMode=='edit' && saving.trx_type=='DEPOSIT'">Update
             </button>
-            <button type="submit" class="btn btn-success" (click)="clickUpdateWithdrawal()"
+            <button [disabled]="connected" type="submit" class="btn btn-success" (click)="clickUpdateWithdrawal()"
                     *ngIf="actionMode=='edit' && saving.trx_type=='WITHDRAWAL'">Update
             </button>
           </div>

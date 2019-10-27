@@ -43,6 +43,8 @@ export class LoanDepositsComponent implements OnInit, AfterViewInit {
 
   loans: any[] = [];
 
+  connected = true;
+
   constructor(private route: ActivatedRoute, public financeService: FinanceService,
               private loanDepositsService: LoanDepositsService, private notifi: NotificationsService,
               private leftNavBarService: LeftNavBarService) {
@@ -71,6 +73,7 @@ export class LoanDepositsComponent implements OnInit, AfterViewInit {
   }
 
   clickRegisterLoanDeposit() {
+    this.connected = true;
     this.loanDeposit.req_date = this.loanDeposit.user_set_req_date.year + '-' + this.loanDeposit.user_set_req_date.month + '-'
       + this.loanDeposit.user_set_req_date.day;
     this.loanDeposit.amount = (Number(this.loanDeposit.amount) * 100) + '';
@@ -79,9 +82,11 @@ export class LoanDepositsComponent implements OnInit, AfterViewInit {
         this.getAllLoanDeposits();
         this.notifi.success('Deposit inserted');
         $('#new_LoanDeposit').modal('hide');
+        this.connected = false;
       }, (err) => {
       this.loanDeposit.amount = (Number(this.loanDeposit.amount) / 100) + '';
       this.notifi.error('While inserting Deposit');
+      this.connected = false;
       }
     );
   }
@@ -105,6 +110,7 @@ export class LoanDepositsComponent implements OnInit, AfterViewInit {
   }
 
   clickUpdateLoanDeposit() {
+    this.connected = true;
     this.loanDeposit.req_date = this.loanDeposit.user_set_req_date.year + '-' + this.loanDeposit.user_set_req_date.month + '-'
       + this.loanDeposit.user_set_req_date.day;
     this.loanDeposit.amount = (Number(this.loanDeposit.amount) * 100) + '';
@@ -113,9 +119,11 @@ export class LoanDepositsComponent implements OnInit, AfterViewInit {
         this.getAllLoanDeposits();
         this.notifi.success('Deposit Updated');
         $('#new_LoanDeposit').modal('hide');
+        this.connected = false;
       }, (err) => {
         this.loanDeposit.amount = (Number(this.loanDeposit.amount) / 100) + '';
         this.notifi.error('While Updating Deposit');
+        this.connected = false;
       }
     );
   }
@@ -144,12 +152,15 @@ export class LoanDepositsComponent implements OnInit, AfterViewInit {
     }).then(
       (willDelete) => {
         if (willDelete.value) {
+          this.connected = true;
           currentClass.loanDeposit.id = currentClass.loanDeposits[i].id;
           currentClass.loanDepositsService.cancelMemberLoanDeposit(this.loanDeposit).subscribe((data: any) => {
               currentClass.getAllLoanDeposits();
               currentClass.notifi.success('Deposit Cancelled');
+              this.connected = false;
             }, (err) => {
               currentClass.notifi.error('While Cancelling Deposit');
+              this.connected = false;
             }
           );
         }
@@ -174,26 +185,32 @@ export class LoanDepositsComponent implements OnInit, AfterViewInit {
   }
 
   getAllLoanDeposits() {
+    this.connected = true;
     this.loanDeposits = [];
     this.loanDepositsService.getAllMemberLoanDeposits().subscribe((data: any) => {
         this.loanDeposits = data;
         this.financeService.addIndex(this.loanDeposits);
         this.drawTable();
+        this.connected = false;
       }, (err) => {
         this.notifi.error('While fetching Deposit details');
         this.loanDepositsDataTable.clear();
         this.loanDepositsDataTable.draw();
+        this.connected = false;
       }
     );
   }
 
   getActiveMemberLoans() {
+    this.connected = true;
     this.loans = [];
     this.loanDepositsService.getActiveMemberLoans().subscribe((data: any) => {
         this.loans = data;
         this.financeService.addIndex(this.loans);
+        this.connected = false;
       }, (err) => {
         this.notifi.error('While fetching Member details');
+        this.connected = false;
       }
     );
   }

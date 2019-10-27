@@ -53,15 +53,15 @@
 
       <div class="col-sm-7">
         <div class="pull-right input-group-sm ">
-          <button style="padding: 10px;" class="btn btn-info">
+          <button [disabled]="connected" style="padding: 10px;" class="btn btn-info">
             <i class="icofont icofont-refresh" aria-hidden="true"></i> Refresh
           </button>
           &nbsp;
-          <button style="padding: 10px;" class="btn btn-success" (click)="clickNewLoanDeposit()" [hidden]="loan.status!='1'">
+          <button [disabled]="connected" style="padding: 10px;" class="btn btn-success" (click)="clickNewLoanDeposit()" [hidden]="loan.status!='1'">
             <i class="icofont icofont-plus" aria-hidden="true"></i> Deposit
           </button>
           &nbsp;
-          <button style="padding: 10px;" class="btn btn-warning" (click)="clickCompleteLoanDeposit()" [hidden]="loan.status!='1'">
+          <button [disabled]="connected" style="padding: 10px;" class="btn btn-warning" (click)="clickCompleteLoanDeposit()" [hidden]="loan.status!='1'">
             <i class="icofont icofont-check" aria-hidden="true"></i> Complete Loan
           </button>
         </div>
@@ -187,7 +187,7 @@
 
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-success" (click)="clickRegisterLoanDeposit()"
+        <button [disabled]="connected" type="submit" class="btn btn-success" (click)="clickRegisterLoanDeposit()"
                 *ngIf="actionMode=='new'">Register
         </button>
         <!--    <button type="submit" class="btn btn-success" (click)="clickUpdateLoanDeposit()"-->

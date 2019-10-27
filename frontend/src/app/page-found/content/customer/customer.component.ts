@@ -26,6 +26,9 @@ export class CustomerComponent implements OnInit, AfterViewInit {
 
   customers: any[] = [];
 
+
+  connected = true;
+
   customer = {
     id: -1,
     code: '-',
@@ -90,12 +93,15 @@ export class CustomerComponent implements OnInit, AfterViewInit {
   clickRegisterCustomer() {
     if (this.customer.name) {
       if (this.customer.tel) {
+        this.connected = true;
         this.customerService.insertCustomer(this.customer).subscribe((data: any) => {
             this.getAllCustomers();
             this.notifi.success('Member inserted');
             $('#new_Customer').modal('hide');
+            this.connected = false;
           }, (err) => {
             this.notifi.error('While inserting member');
+            this.connected = false;
           }
         );
       } else {
@@ -143,12 +149,15 @@ export class CustomerComponent implements OnInit, AfterViewInit {
   clickUpdateCustomer() {
     if (this.customer.name) {
       if (this.customer.tel) {
+        this.connected = true;
         this.customerService.updateCustomer(this.customer).subscribe((data: any) => {
             this.getAllCustomers();
             this.notifi.success('Member Updated');
             $('#new_Customer').modal('hide');
+            this.connected = false;
           }, (err) => {
             this.notifi.error('While Updating Member');
+            this.connected = false;
           }
         );
       } else {
@@ -173,12 +182,15 @@ export class CustomerComponent implements OnInit, AfterViewInit {
     }).then(
       (willDelete) => {
         if (willDelete.value) {
+          this.connected = true;
           currentClass.customer.id = currentClass.customers[i].id;
           currentClass.customerService.deleteCustomer(this.customer).subscribe((data: any) => {
               currentClass.getAllCustomers();
               currentClass.notifi.success('Member Deleted');
+              this.connected = false;
             }, (err) => {
               currentClass.notifi.error('While Deleting Member');
+              this.connected = false;
             }
           );
         }
@@ -186,13 +198,16 @@ export class CustomerComponent implements OnInit, AfterViewInit {
   }
 
   clickInfoCustomer(i) {
+    this.connected = true;
     this.actionMode = 'info';
     this.loadCustomer(i);
     this.savingHistory = [];
     this.customerService.getCustomerSavingHistory(this.customer).subscribe((data: any) => {
         this.savingHistory = this.financeService.processSavingHistory(data);
+        this.connected = false;
       }, (err) => {
         this.notifi.error('While fetching Member History');
+        this.connected = false;
       }
     );
   }
@@ -221,15 +236,18 @@ export class CustomerComponent implements OnInit, AfterViewInit {
   }
 
   getAllCustomers() {
+    this.connected = true;
     this.customers = [];
     this.customerService.getAllCustomers().subscribe((data: any) => {
         this.customers = data;
         this.addIndex(this.customers);
         this.drawTable();
+        this.connected = false;
       }, (err) => {
         this.notifi.error('While fetching Member details');
         this.customerDataTable.clear();
         this.customerDataTable.draw();
+        this.connected = false;
       }
     );
   }

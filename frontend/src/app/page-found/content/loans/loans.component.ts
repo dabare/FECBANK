@@ -59,7 +59,7 @@ export class LoansComponent implements OnInit, AfterViewInit {
 
   customers: any[] = [];
 
-  deposits: any[] = [];
+  connected = true;
   constructor(private route: ActivatedRoute, private loansService: LoansService, private notifi: NotificationsService,
               public financeService: FinanceService, private leftNavBarService: LeftNavBarService) {
   }
@@ -87,6 +87,7 @@ export class LoansComponent implements OnInit, AfterViewInit {
   }
 
   clickRegisterLoan() {
+    this.connected  = true;
     this.loan.req_date = this.loan.user_set_req_date.year + '-' + this.loan.user_set_req_date.month + '-' + this.loan.user_set_req_date.day;
     this.loan.amount = (Number(this.loan.amount) * 100) + '';
     this.loan.charges = (Number(this.loan.charges) * 100) + '';
@@ -98,12 +99,14 @@ export class LoansComponent implements OnInit, AfterViewInit {
         this.getAllLoans();
         this.notifi.success('Loan inserted');
         $('#new_Loan').modal('hide');
+        this.connected = false;
       }, (err) => {
         this.loan.amount = (Number(this.loan.amount) / 100) + '';
         this.loan.charges = (Number(this.loan.charges) / 100) + '';
         this.loan.late_payment_charge = (Number(this.loan.late_payment_charge) / 100) + '';
         this.loan.reject_cheque_penalty = (Number(this.loan.reject_cheque_penalty) / 100) + '';
         this.notifi.error('While inserting Loan');
+        this.connected = false;
       }
     );
   }
@@ -152,6 +155,7 @@ export class LoansComponent implements OnInit, AfterViewInit {
   }
 
   clickUpdateLoan() {
+    this.connected = true;
     this.loan.req_date = this.loan.user_set_req_date.year + '-' + this.loan.user_set_req_date.month + '-' + this.loan.user_set_req_date.day;
     this.loan.amount = (Number(this.loan.amount) * 100) + '';
     this.loan.charges = (Number(this.loan.charges) * 100) + '';
@@ -163,12 +167,14 @@ export class LoansComponent implements OnInit, AfterViewInit {
         this.getAllLoans();
         this.notifi.success('Loan Updated');
         $('#new_Loan').modal('hide');
+        this.connected = false;
       }, (err) => {
       this.loan.amount = (Number(this.loan.amount) / 100) + '';
       this.loan.charges = (Number(this.loan.charges) / 100) + '';
       this.loan.late_payment_charge = (Number(this.loan.late_payment_charge) / 100) + '';
       this.loan.reject_cheque_penalty = (Number(this.loan.reject_cheque_penalty) / 100) + '';
       this.notifi.error('While Updating Loan');
+      this.connected = false;
       }
     );
   }
@@ -187,12 +193,15 @@ export class LoansComponent implements OnInit, AfterViewInit {
     }).then(
       (willDelete) => {
         if (willDelete.value) {
+          this.connected = true;
           currentClass.loan.id = currentClass.loans[i].id;
           currentClass.loansService.deleteMemberLoan(this.loan).subscribe((data: any) => {
               currentClass.getAllLoans();
               currentClass.notifi.success('Loan Deleted');
+              this.connected = false;
             }, (err) => {
               currentClass.notifi.error('While Deleting Loan');
+              this.connected = false;
             }
           );
         }
@@ -203,20 +212,6 @@ export class LoansComponent implements OnInit, AfterViewInit {
     this.actionMode = 'info';
     this.clearLoan();
     this.loadLoan(i);
-    // this.deposits = [];
-    // this.loansService.getDepositsOfLoan(this.loan).subscribe((data: any) => {
-    //   this.deposits = this.financeService.processLoanHistory(data, this.loan.req_date,
-    //     Number(this.loan.amount) * 100,
-    //     Number(this.loan.duration_months),
-    //     Number(this.loan.rate),
-    //     Number(this.loan.rental) * 100,
-    //     Number(this.loan.total) * 100,
-    //     0);
-    //   console.log(this.deposits);
-    //   }, (err) => {
-    //     this.notifi.error('While fetching data');
-    //   }
-    // );
   }
 
   gotoCustomer(i) {
@@ -284,27 +279,33 @@ export class LoansComponent implements OnInit, AfterViewInit {
   }
 
   getAllLoans() {
+    this.connected = true;
     this.loans = [];
     this.loansService.getAllMemberLoans().subscribe((data: any) => {
         this.loans = data;
         this.addIndex(this.loans);
         this.getLoanDetails();
         this.drawTable();
+        this.connected = false;
       }, (err) => {
         this.notifi.error('While fetching Loan details');
         this.loansDataTable.clear();
         this.loansDataTable.draw();
+        this.connected = false;
       }
     );
   }
 
   getAllCustomers() {
+    this.connected = true;
     this.customers = [];
     this.loansService.getAllCustomers().subscribe((data: any) => {
         this.customers = data;
         this.addIndex(this.customers);
+        this.connected = false;
       }, (err) => {
         this.notifi.error('While fetching Member details');
+        this.connected = false;
       }
     );
   }
