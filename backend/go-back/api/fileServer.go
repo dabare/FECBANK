@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/gorilla/mux"
+	"github.com/vincent-petithory/dataurl"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -15,6 +16,7 @@ func initFileServer(router *mux.Router) {
 	router.HandleFunc("/file-api/list/{url:[^ ]*}", fileApiList)
 	router.HandleFunc("/file-api/delete/{url:[^ ]*}", fileApiDelete)
 	router.HandleFunc("/file-api/create/{url:[^ ]*}", fileApiCreate)
+	router.HandleFunc("/file-api/create-from-url/{url:[^ ]*}", fileApiCreateFromDataURL)
 }
 
 func fileApiView(w http.ResponseWriter, r *http.Request) {
@@ -66,6 +68,8 @@ func fileApiList(w http.ResponseWriter, r *http.Request) {
 		str += f.Name()
 		str += `","size":`
 		str += fmt.Sprintf(`"%d"`, f.Size())
+		str += `,"isDir":`
+		str += fmt.Sprintf(`"%t"`, f.IsDir())
 		str += `}`
 	}
 	str += "]"
@@ -148,6 +152,54 @@ func fileApiCreate(w http.ResponseWriter, r *http.Request) {
 
 	// save changes
 	err = file.Sync()
+	if err != nil {
+		log.Println(err)
+		http.Error(w, `{ "error":"`+strings.ToUpper(err.Error())+`"}`, http.StatusInternalServerError)
+		return
+	}
+
+	Respond(w, `{"filesAffected":1}`)
+}
+
+//when sent blob url
+func fileApiCreateFromDataURL(w http.ResponseWriter, r *http.Request) {
+	_, status := checkJWT(w, r)
+
+	if status != http.StatusOK {
+		log.Println("AUTHENTICATION FAILED")
+		http.Error(w, `{ "error":"AUTHENTICATION FAILED"}`, http.StatusUnauthorized)
+		return
+	}
+
+	path := r.URL.Path[1:]
+	path = strings.Replace(string(path), "file-api/create-from-url", fileServerDir, 1)
+
+	err := os.MkdirAll(path, 0777)
+	err = os.Remove(path)
+
+	// check if file exists
+	_, err = os.Stat(path)
+
+	// create file if not exists
+	if os.IsNotExist(err) {
+		file, err := os.Create(path)
+		defer file.Close()
+		if err != nil {
+			log.Println(err)
+			http.Error(w, `{ "error":"`+strings.ToUpper(err.Error())+`"}`, http.StatusInternalServerError)
+			return
+		}
+	}
+
+	dataURL, err := dataurl.Decode(r.Body)
+	defer r.Body.Close()
+	if err != nil {
+		log.Println(err)
+		http.Error(w, `{ "error":"`+strings.ToUpper(err.Error())+`"}`, http.StatusInternalServerError)
+		return
+	}
+
+	err = ioutil.WriteFile(path, dataURL.Data, 0644)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, `{ "error":"`+strings.ToUpper(err.Error())+`"}`, http.StatusInternalServerError)
