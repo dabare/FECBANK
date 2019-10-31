@@ -44,22 +44,22 @@ order by `req_date`;
 
 CREATE VIEW member_saving_total AS
 SELECT "member_saving_total" AS `type`, (s.amount -  w.amount) AS amount FROM
-(SELECT SUM(amount) AS amount FROM member_saving WHERE `status` = 1)  s,
-(SELECT SUM(amount) AS amount FROM member_withdraw WHERE `status` = 1)  w;
+(SELECT coalesce(SUM(amount),0) AS amount FROM member_saving WHERE `status` = 1)  s,
+(SELECT coalesce(SUM(amount),0) AS amount FROM member_withdraw WHERE `status` = 1)  w;
 
 CREATE VIEW bank_book_total AS
 SELECT "bank_book_total" AS `type`, (s.amount -  w.amount) AS amount FROM
-(SELECT SUM(amount) AS amount FROM bank_book_ledger WHERE `status` = 7)  s,
-(SELECT SUM(amount) AS amount FROM bank_book_ledger WHERE `status` = 9)  w;
+(SELECT coalesce(SUM(amount),0) AS amount FROM bank_book_ledger WHERE `status` = 7)  s,
+(SELECT coalesce(SUM(amount),0) AS amount FROM bank_book_ledger WHERE `status` = 9)  w;
 
 CREATE VIEW member_loan_total AS
 SELECT "member_loan_total" AS `type`, (l.amount -  d.amount) AS amount FROM
-(SELECT SUM(amount) AS amount FROM member_loan WHERE `status` = 1) l,
-(SELECT SUM(amount) AS amount FROM member_loan_deposit WHERE `status` = 1) d;
+(SELECT coalesce(SUM(amount),0) AS amount FROM member_loan WHERE `status` = 1) l,
+(SELECT coalesce(SUM(amount),0) AS amount FROM member_loan_deposit WHERE `status` = 1) d;
 
 CREATE VIEW member_savings_top_5 AS
 SELECT tt.member_id, tt.amount, member.name FROM
-(SELECT t.member_id, SUM(t.amount) AS amount
+(SELECT t.member_id, coalesce(SUM(t.amount),0) AS amount
 FROM
 (select
 `member_id`,
@@ -74,7 +74,7 @@ GROUP BY t.member_id ORDER BY amount DESC LIMIT 5) tt
 LEFT JOIN member ON member.id = tt.member_id;
 
 CREATE VIEW member_count AS
-SELECT "member_count" AS `type`, COUNT(id) as `amount` FROM member WHERE `status` = 1;
+SELECT "member_count" AS `type`, coalesce(COUNT(id),0) as `amount` FROM member WHERE `status` = 1;
 
 CREATE VIEW `statistics` AS
 SELECT * FROM bank_book_total
